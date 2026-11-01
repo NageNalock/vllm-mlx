@@ -871,12 +871,26 @@ def _attach_logit_bias_processor(
         chat_kwargs["logits_processors"] = list(existing) + list(processors)
 
 
+def _validate_keydiff_request(
+    engine: BaseEngine, request: ChatCompletionRequest | CompletionRequest
+) -> None:
+    if request.keydiff_kv_budget is None:
+        return
+    if not isinstance(engine, SimpleEngine):
+        raise HTTPException(400, "KeyDiff requires text-only SimpleEngine")
+    try:
+        engine.validate_keydiff(request.keydiff_kv_budget, request.specprefill)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+
 def _prepare_chat_completion_invocation(
     engine: BaseEngine,
     request: ChatCompletionRequest,
     effective_max_tokens: int,
 ) -> PreparedChatInvocation:
     """Precompute messages, kwargs, and decoding constraints for chat completions."""
+    _validate_keydiff_request(engine, request)
     messages, images, videos, audios, has_media = _prepare_chat_messages(
         engine, request.messages
     )
@@ -911,6 +925,8 @@ def _prepare_chat_completion_invocation(
         if video_max_frames:
             chat_kwargs["video_max_frames"] = video_max_frames
 
+    if request.keydiff_kv_budget is not None:
+        chat_kwargs["keydiff_kv_budget"] = request.keydiff_kv_budget
     if request.specprefill is not None:
         chat_kwargs["specprefill"] = request.specprefill
     if request.specprefill_keep_pct is not None:
@@ -5756,6 +5772,7 @@ async def create_completion(request: CompletionRequest, raw_request: Request):
     release_on_exit = True
 
     try:
+        _validate_keydiff_request(engine, request)
         if request.stream:
             response = StreamingResponse(
                 _disconnect_guard(
@@ -5798,6 +5815,8 @@ async def create_completion(request: CompletionRequest, raw_request: Request):
             generate_kwargs["repetition_penalty"] = _resolve_repetition_penalty(
                 comp_rep_penalty
             )
+            if request.keydiff_kv_budget is not None:
+                generate_kwargs["keydiff_kv_budget"] = request.keydiff_kv_budget
             if request.specprefill is not None:
                 generate_kwargs["specprefill"] = request.specprefill
             if request.specprefill_keep_pct is not None:
@@ -7063,6 +7082,8 @@ async def stream_completion(
     generate_kwargs["repetition_penalty"] = _resolve_repetition_penalty(
         repetition_penalty
     )
+    if request.keydiff_kv_budget is not None:
+        generate_kwargs["keydiff_kv_budget"] = request.keydiff_kv_budget
     if request.specprefill is not None:
         generate_kwargs["specprefill"] = request.specprefill
     if request.specprefill_keep_pct is not None:

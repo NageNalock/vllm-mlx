@@ -164,6 +164,7 @@ class MLXLanguageModel:
         repetition_penalty: float = 1.0,
         stop: list[str] | None = None,
         logits_processors: list | None = None,
+        keydiff_kv_budget: int | None = None,
         **kwargs,
     ) -> GenerationOutput:
         """
@@ -182,6 +183,8 @@ class MLXLanguageModel:
             logits_processors: Optional externally-supplied logits processors
                 (e.g. JSON schema constrained decoding).  Merged with built-in
                 penalty processors.
+            keydiff_kv_budget: Experimental number of prompt KV rows to retain
+                per head after prefill (None = disabled).
 
         Returns:
             GenerationOutput with generated text and tokens
@@ -201,6 +204,12 @@ class MLXLanguageModel:
         if logits_processors:
             all_processors = list(logits_processors) + all_processors
 
+        cache_kwargs = {}
+        if keydiff_kv_budget is not None:
+            prompt, cache_kwargs["prompt_cache"] = self._prepare_keydiff_prompt(
+                prompt, keydiff_kv_budget
+            )
+
         # Generate text
         output_text = generate(
             self.model,
@@ -210,6 +219,7 @@ class MLXLanguageModel:
             sampler=sampler,
             logits_processors=all_processors if all_processors else None,
             verbose=False,
+            **cache_kwargs,
         )
 
         # Tokenize output to get token IDs
@@ -224,6 +234,18 @@ class MLXLanguageModel:
             finish_reason=finish_reason,
         )
 
+    def _prepare_keydiff_prompt(self, prompt, budget):
+        from ..keydiff import make_keydiff_cache
+
+        if self._mtp:
+            raise ValueError("KeyDiff cannot be combined with speculative decoding")
+        if isinstance(prompt, str):
+            add_special = self.tokenizer.bos_token is None or not prompt.startswith(
+                self.tokenizer.bos_token
+            )
+            prompt = self.tokenizer.encode(prompt, add_special_tokens=add_special)
+        return prompt, make_keydiff_cache(self.model, budget, len(prompt))
+
     def stream_generate(
         self,
         prompt: Union[str, "mx.array", list[int]],
@@ -237,6 +259,7 @@ class MLXLanguageModel:
         stop: list[str] | None = None,
         logits_processors: list | None = None,
         prompt_cache=None,
+        keydiff_kv_budget: int | None = None,
         **kwargs,
     ) -> Iterator[StreamingOutput]:
         """
@@ -253,6 +276,8 @@ class MLXLanguageModel:
             repetition_penalty: Multiplicative penalty for repeating tokens
             stop: List of stop sequences
             prompt_cache: Pre-populated KV cache (e.g. from SpecPrefill)
+            keydiff_kv_budget: Experimental prompt KV rows retained per head.
+                Requires a fresh, unquantized full-attention cache.
 
         Yields:
             StreamingOutput for each generated token
@@ -261,6 +286,13 @@ class MLXLanguageModel:
             self.load()
 
         from mlx_lm import stream_generate
+
+        if keydiff_kv_budget is not None:
+            if prompt_cache is not None:
+                raise ValueError("KeyDiff requires a fresh prompt cache")
+            prompt, prompt_cache = self._prepare_keydiff_prompt(
+                prompt, keydiff_kv_budget
+            )
 
         # Create sampler and logits processors with full Unsloth params
         sampler = self._create_sampler(temperature, top_p, top_k, min_p)

@@ -7,6 +7,7 @@ Performance benchmarks for vllm-mlx on Apple Silicon.
 - [LLM Benchmarks](llm.md) - Text generation performance
 - [Image Benchmarks](image.md) - Image understanding performance
 - [Video Benchmarks](video.md) - Video understanding performance
+- [Experimental KeyDiff KV pruning](../guides/keydiff.md) - Memory, latency, and retrieval comparisons
 
 ## Quick Commands
 

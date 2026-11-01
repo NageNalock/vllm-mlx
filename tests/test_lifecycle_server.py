@@ -416,6 +416,7 @@ class TestCompletionStreamingRelease:
             specprefill_keep_pct=None,
             stop=None,
             timeout=60.0,
+            keydiff_kv_budget=None,
         )
 
         with pytest.raises(RuntimeError, match="generation failed"):
@@ -493,6 +494,7 @@ class TestCompletionStreamingRelease:
             specprefill_keep_pct=None,
             stop=None,
             timeout=None,
+            keydiff_kv_budget=None,
         )
 
         response = await srv.create_completion(request, FakeRequest())
@@ -808,6 +810,7 @@ class TestLifecycleFailureHandling:
             specprefill=None,
             specprefill_keep_pct=None,
             chat_template_kwargs=None,
+            keydiff_kv_budget=None,
             stop=None,
             timeout=None,
         )
