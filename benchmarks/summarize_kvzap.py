@@ -13,6 +13,7 @@ def main():
     parser.add_argument("input", type=Path)
     parser.add_argument("--baseline", default="full")
     parser.add_argument("--candidate", default="kvzap")
+    parser.add_argument("--manifest", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     rows = [json.loads(s) for s in args.input.read_text().splitlines()]
@@ -23,6 +24,11 @@ def main():
         case = cases.setdefault(row["id"], {})
         assert row["mode"] not in case, (row["id"], row["mode"])
         case[row["mode"]] = row
+    if args.manifest:
+        manifest = json.loads(args.manifest.read_text())
+        assert set(cases) == {
+            s["id"] for s in manifest["samples"]
+        }, "Incomplete evaluation"
     pairs = []
     for name, modes in cases.items():
         a, b = modes[args.baseline], modes[args.candidate]

@@ -33,7 +33,7 @@ DATA_REVISION = "5e628be450b7e67fb7ae6e201bd6d8f7056f7672"
 _quantized_attention = base.quantized_scaled_dot_product_attention
 
 
-def fused_quant8_baseline(queries, keys, values, scale, mask, group_size=64, bits=8):
+def fused_quantized_baseline(queries, keys, values, scale, mask, group_size=64, bits=8):
     # Use the same fused prefill as the new cache, making the baseline stronger.
     if queries.shape[2] >= 512:
         return mx.fast.scaled_dot_product_attention(
@@ -99,7 +99,7 @@ def measure_cache(model, tokenizer, tokens, mode, args, max_tokens, stop_at_eos,
         max_tokens=max_tokens,
         prompt_cache=cache,
         prefill_step_size=args.prefill_step_size,
-        kv_bits=8 if mode == "quant8" else None,
+        kv_bits={"quant4": 4, "quant8": 8}.get(mode),
         quantized_kv_start=0,
         prompt_progress_callback=progress,
     )
@@ -237,7 +237,12 @@ def retrieval_score(text, expected):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--modes", nargs="+", default=["full", "quant8", "kvzap"])
+    parser.add_argument(
+        "--modes",
+        nargs="+",
+        choices=("full", "quant4", "quant8", "kvzap"),
+        default=["full", "quant8", "kvzap"],
+    )
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--case-ids", nargs="+")
     parser.add_argument("--prompt-tokens", type=int, default=4096)
@@ -247,7 +252,7 @@ def main():
     parser.add_argument("--threshold", type=float, default=-7)
     parser.add_argument("--trials", type=int, default=1)
     args = parser.parse_args()
-    base.quantized_scaled_dot_product_attention = fused_quant8_baseline
+    base.quantized_scaled_dot_product_attention = fused_quantized_baseline
     source = Path(__file__).resolve().parents[1]
     emit(
         {
@@ -261,7 +266,7 @@ def main():
             "predictor_revision": PREDICTOR_REVISION,
             "mlx": version("mlx"),
             "mlx_lm": version("mlx-lm"),
-            "quant8_baseline": "8-bit cache with fused large prefill; same fast path as KVzap",
+            "quantized_baseline": "4/8-bit cache with fused large prefill",
             "source_sha256": {
                 p: hashlib.sha256((source / p).read_bytes()).hexdigest()
                 for p in [

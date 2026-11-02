@@ -35,8 +35,6 @@ class TestKVzap(unittest.TestCase):
         cache.score(scores)
         cache.update_and_fetch(k, v)
         mx.eval(cache.state)
-        k = mx.dequantize(*mx.quantize(k, bits=8), bits=8)
-        v = mx.dequantize(*mx.quantize(v, bits=8), bits=8)
 
         # Two new queries test bottom-right causal alignment after head pruning.
         q = mx.random.normal((1, heads * 2, 2, dim))
@@ -67,7 +65,7 @@ class TestKVzap(unittest.TestCase):
                 np.array(c.keys[:, :, : len(retained[0, 0])]), retained
             )
 
-    def test_prefill_matches_quant8_then_decode_matches_dequantized_reference(self):
+    def test_dense_prefill_and_no_pruning_decode_match_full_reference(self):
         from mlx_lm.models.cache import KVCache
 
         mx.random.seed(7)
@@ -94,21 +92,8 @@ class TestKVzap(unittest.TestCase):
             expected = model(tokens[:, start:end], cache=full)
             actual = model(tokens[:, start:end], cache=compressed)
             np.testing.assert_allclose(np.array(actual), np.array(expected), atol=1e-5)
-            if start == 0:
-                full = [c.to_quantized(bits=8) for c in full]
         self.assertTrue(all(c._heads is None for c in compressed))
-        dense = []
-        for cache in full:
-            reference = KVCache()
-            reference.keys = mx.dequantize(
-                *(k[..., :17, :] for k in cache.keys), bits=8
-            )
-            reference.values = mx.dequantize(
-                *(v[..., :17, :] for v in cache.values), bits=8
-            )
-            reference.offset = 17
-            dense.append(reference)
-        expected = model(tokens[:, 17:19], cache=dense)
+        expected = model(tokens[:, 17:19], cache=full)
         actual = model(tokens[:, 17:19], cache=compressed)
         np.testing.assert_allclose(np.array(actual), np.array(expected), atol=1e-5)
         self.assertEqual(compressed[0].offset, 19)

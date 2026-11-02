@@ -1,0 +1,42 @@
+{
+  "frozen_at_utc": "2026-11-02T12:55:38.868811+00:00",
+  "variant": "Full-precision dense prefill followed by one-shot physical per-KV-head pruning; generated tokens are retained without pruning.",
+  "threshold": -7.0,
+  "protected_recent_tokens": 128,
+  "prefill_step_size": 2048,
+  "validation_cases": 48,
+  "validation_modes": [
+    "full",
+    "quant4",
+    "kvzap"
+  ],
+  "quality_gates_vs_full": {
+    "maximum_overall_mean_loss_pp": 1.0,
+    "maximum_per_dataset_mean_loss_pp": 3.0
+  },
+  "quality_reporting": "Report all individual regressions and paired bootstrap intervals; passing point-estimate gates is not a proof of non-inferiority. The 4-bit baseline is a descriptive comparison, not a threshold-tuning target.",
+  "early_stop": "Stop for futility if a completed dataset breaches its pre-specified gate. Retain every completed output and state the incomplete sample count.",
+  "selection": "Seed 20261103; exclude all previously selected IDs and their document contexts. 16 per dataset; Qasper/LCC include 6 examples at 2K-4K, 6 at 4K-8K, 4 at 8K-16K; HotpotQA includes 16 at 8K-16K.",
+  "known_development_regressions": [
+    "lcc-412: minor code-similarity loss",
+    "qasper-130: omitted method details; -18.17 pp word F1; remains a real pruning failure"
+  ],
+  "rejected_candidate": "8-bit prefill version at d1735fa failed the complete 16-case Qasper subset (-6.79 pp) and was stopped after 21 paired cases. Do not relabel those cases held-out for the revised candidate.",
+  "performance_gates_vs_fused_8bit_at_32k": {
+    "minimum_decode_speedup": 1.25,
+    "minimum_resident_kv_reduction": 0.2
+  },
+  "performance_reporting": "Also compare full KV and fused 4-bit KV, keep TTFT/whole-request/decode metrics separate, distinguish MLX allocation from physical memory. No larger-model claim.",
+  "source_sha256": {
+    "vllm_mlx/kvzap.py": "fa5ed45ace29d1cd0c12e8b6f0c0a78f8aa44c1492c6d4513adbb7547eead86e",
+    "vllm_mlx/models/llm.py": "ffb56c73be1d771cf7bec09ad4b146b68d6a6a6e6a2e50a96645d489dfb91a3c",
+    "vllm_mlx/engine/simple.py": "182aaf671f43771e1ff037ff34bb7867f739ac59a1dfbbc63ca050a0ad21f3ad",
+    "vllm_mlx/api/models.py": "9ca2894b7de2f18f7eef9363a9ce267ea0d8cefa7c9d221dddf7aeb57ed2383b",
+    "vllm_mlx/server.py": "a616471d0a7c28f27c72772fc815b9e025b304bd8a7368d51bc75b3648a0a0d8",
+    "benchmarks/bench_kvzap.py": "488c016cc0e40332cc095f6d9730947b928de4acdbf87821f22fbaa7b09862f5",
+    "benchmarks/kvzap_quality.py": "0c40b843a5826cf5f04090ee098dae06126cc814c126d674050c115e68c10e55",
+    "benchmarks/kvzap_memory.py": "e47122ef3f952eab90e57a92ade39d9d9ed197abbe6b42cb71e65fea46ad6c20",
+    "benchmarks/select_kvzap_cases.py": "253e67a72d1a8fb76369d806d655871d162896bd45629ad34fa97f2cf378257c",
+    "benchmarks/results/kvzap/dense_validation_manifest.json": "5541bc7b47bdc128ac636f493fd222a1f9d586021cec4d0eca48f969daab5cfe"
+  }
+}

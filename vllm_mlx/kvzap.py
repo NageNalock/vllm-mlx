@@ -9,8 +9,7 @@ from pathlib import Path
 import mlx.core as mx
 import mlx.nn as nn
 
-from mlx_lm.models.base import quantized_scaled_dot_product_attention
-from mlx_lm.models.cache import KVCache, QuantizedKVCache, _BaseCache
+from mlx_lm.models.cache import KVCache, _BaseCache
 
 PREDICTOR = "nvidia/KVzap-linear-Llama-3.1-8B-Instruct"
 PREDICTOR_REVISION = "92b20816c9d97412b1976ea15aa68b7b60510883"
@@ -43,7 +42,8 @@ class KVzapCache(_BaseCache):
     """Remove low-scoring prompt entries, independently for each KV head.
 
     RoPE uses the total number of processed tokens. The per-head caches track
-    physical storage separately. Generated tokens are kept without pruning.
+    physical storage separately. Prefill keeps the model's KV dtype and uses
+    dense attention. Generated tokens are kept without pruning.
     This cache does not support batching, prefix reuse, or serialization.
     """
 
@@ -66,12 +66,8 @@ class KVzapCache(_BaseCache):
             mx.eval(self._scores[-1])
 
     def compact(self):
-        keys = mx.dequantize(
-            *(k[..., : self._cache.offset, :] for k in self._cache.keys), bits=8
-        )
-        values = mx.dequantize(
-            *(v[..., : self._cache.offset, :] for v in self._cache.values), bits=8
-        )
+        keys = self._cache.keys[..., : self._cache.offset, :]
+        values = self._cache.values[..., : self._cache.offset, :]
         scores = mx.concatenate(self._scores, axis=-1)
         keep = scores >= self.threshold
         keep[..., -self.window_size :] = True
@@ -92,8 +88,6 @@ class KVzapCache(_BaseCache):
         self._scores = []
 
     def update_and_fetch(self, keys, values):
-        if self.offset and self._heads is None and type(self._cache) is KVCache:
-            self._cache = self._cache.to_quantized(bits=8)
         if self._heads is None and self.offset >= self.prompt_length:
             # Complete dense prefill before pruning, as in the reference method.
             self.compact()
@@ -108,18 +102,6 @@ class KVzapCache(_BaseCache):
 
     def attention(self, queries, keys, values, scale, mask):
         if self._heads is None:
-            if isinstance(self._cache, QuantizedKVCache):
-                if queries.shape[2] >= 512:
-                    return mx.fast.scaled_dot_product_attention(
-                        queries * scale,
-                        mx.dequantize(*keys, bits=8),
-                        mx.dequantize(*values, bits=8),
-                        scale=1.0,
-                        mask=mask,
-                    )
-                return quantized_scaled_dot_product_attention(
-                    queries, keys, values, scale=scale, mask=mask, bits=8
-                )
             return mx.fast.scaled_dot_product_attention(
                 queries, keys, values, scale=scale, mask=mask
             )
@@ -140,6 +122,10 @@ class KVzapCache(_BaseCache):
         caches = self._heads if self._heads is not None else [self._cache]
         return [c.state for c in caches], self._scores
 
+    @state.setter
+    def state(self, value):
+        raise ValueError("KVzap does not support restoring a saved cache")
+
     def size(self):
         return self.offset
 
@@ -147,7 +133,9 @@ class KVzapCache(_BaseCache):
         return self.offset == 0
 
     def to_quantized(self, group_size=64, bits=4):
-        raise ValueError("KVzap manages its cache precision; do not also set kv_bits")
+        raise ValueError(
+            "KVzap requires full-precision prefill; do not also set kv_bits"
+        )
 
     @property
     def nbytes(self):
