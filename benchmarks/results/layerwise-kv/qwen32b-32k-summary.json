@@ -1,0 +1,165 @@
+{
+  "summarized_at_utc": "2026-11-02T18:16:12.683226+00:00",
+  "model": "mlx-community/Qwen3-32B-4bit",
+  "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+  "protocol": "large_model_protocol.json",
+  "trials_per_mode": 1,
+  "results": {
+    "quant4_layerwise": {
+      "mode": "quant4_layerwise",
+      "source": "qwen32b-layerwise-32k.jsonl",
+      "returncode": 0,
+      "elapsed_s": 1182.6133814170025,
+      "status": "completed",
+      "stop_reason": null,
+      "pressure_sample_counts": {
+        "1": 76,
+        "2": 512
+      },
+      "source_sha256": "b8d4bedff55fe2344fe2ff34d47c1416d883bc222e425b67a9e5605c02714b10",
+      "arguments": {
+        "modes": [
+          "quant4_layerwise"
+        ],
+        "model": "mlx-community/Qwen3-32B-4bit",
+        "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+        "manifest": null,
+        "case_ids": null,
+        "prompt_tokens": 32768,
+        "task": "retrieval",
+        "generation_tokens": 128,
+        "prefill_step_size": 2048,
+        "quantized_kv_start": 0,
+        "trials": 1
+      },
+      "last_reported_progress": {
+        "event": "progress",
+        "mode": "quant4_layerwise",
+        "processed": 32768,
+        "total": 32768,
+        "elapsed_s": 1125.3016194590018
+      },
+      "prompt_tokens": 32768,
+      "generation_tokens": 128,
+      "ttft_s": 1125.3027664590045,
+      "decode_tps": 3.6765625671194027,
+      "total_s": 1159.8459022499737,
+      "kv_bytes_first": 2434793472,
+      "kv_bytes_end": 2434793472,
+      "peak_bytes": 22133286932,
+      "prompt_sha256": "a5ed0e6ac032ad94e731d3b02f7e487c95c0350fa07374a48a4c2d6575e3c516",
+      "output_sha256": "1d9112052dffa06ff65820372d7c328aef86d37d20a07238605d2b1191acc519",
+      "first_logprobs_sha256": "3720d131107220746948075412363f6871809bcbd7f65ece171fcfaf23899aee",
+      "retrieval_score": 1.0,
+      "mlx_peak_gib": 20.613229770213366,
+      "kv_first_gib": 2.267578125,
+      "system_swapin_bytes_delta": 5913706496,
+      "system_swapout_bytes_delta": 7550205952,
+      "system_swap_used_bytes_delta": 1365770240,
+      "physical_peak_bytes": 23527995384,
+      "physical_peak_gib": 21.912153236567974,
+      "resource_footer": "qwen32b-layerwise-32k.time.txt"
+    },
+    "quant4": {
+      "mode": "quant4",
+      "source": "qwen32b-early5000-32k.jsonl",
+      "returncode": 0,
+      "elapsed_s": 1154.7624957499793,
+      "status": "completed",
+      "stop_reason": null,
+      "pressure_sample_counts": {
+        "1": 478,
+        "2": 96
+      },
+      "source_sha256": "0e7928ef5eae1a6f8f8184d446ca1639470a9576cfa85269cf659a8f997cdf5f",
+      "arguments": {
+        "modes": [
+          "quant4"
+        ],
+        "model": "mlx-community/Qwen3-32B-4bit",
+        "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+        "manifest": null,
+        "case_ids": null,
+        "prompt_tokens": 32768,
+        "task": "retrieval",
+        "generation_tokens": 128,
+        "prefill_step_size": 2048,
+        "quantized_kv_start": 5000,
+        "trials": 1
+      },
+      "last_reported_progress": {
+        "event": "progress",
+        "mode": "quant4",
+        "processed": 32768,
+        "total": 32768,
+        "elapsed_s": 1104.237368250033
+      },
+      "prompt_tokens": 32768,
+      "generation_tokens": 128,
+      "ttft_s": 1104.2403170409962,
+      "decode_tps": 4.265629725247152,
+      "total_s": 1134.013177832996,
+      "kv_bytes_first": 2434793472,
+      "kv_bytes_end": 2434793472,
+      "peak_bytes": 21783242832,
+      "prompt_sha256": "a5ed0e6ac032ad94e731d3b02f7e487c95c0350fa07374a48a4c2d6575e3c516",
+      "output_sha256": "696841b04a31a3cf3beb6c239b5bb3aa5bdf11b6a5eb9bd80a252e8ed366f08a",
+      "first_logprobs_sha256": "4d38d25317c674bad1e47092f01326bd35a62115a4d2743bed1b577c10165ba9",
+      "retrieval_score": 1.0,
+      "mlx_peak_gib": 20.287225797772408,
+      "kv_first_gib": 2.267578125,
+      "system_swapin_bytes_delta": 4109778944,
+      "system_swapout_bytes_delta": 4141481984,
+      "system_swap_used_bytes_delta": -202113024,
+      "physical_peak_bytes": 24585304104,
+      "physical_peak_gib": 22.89684871584177,
+      "resource_footer": "qwen32b-early5000-32k.time.txt"
+    },
+    "quant4_deferred": {
+      "mode": "quant4_deferred",
+      "source": "qwen32b-deferred-32k.jsonl",
+      "returncode": -15,
+      "elapsed_s": 1201.3497274579713,
+      "status": "stopped",
+      "stop_reason": "Run exceeded the pre-specified 20-minute duration budget.",
+      "pressure_sample_counts": {
+        "1": 133,
+        "2": 465
+      },
+      "source_sha256": "4ec5965e06e7122bdc09e39cd6a8b833d4770624d07e53ec7418a2258bd8b494",
+      "arguments": {
+        "modes": [
+          "quant4_deferred"
+        ],
+        "model": "mlx-community/Qwen3-32B-4bit",
+        "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+        "manifest": null,
+        "case_ids": null,
+        "prompt_tokens": 32768,
+        "task": "retrieval",
+        "generation_tokens": 128,
+        "prefill_step_size": 2048,
+        "quantized_kv_start": 0,
+        "trials": 1
+      },
+      "last_reported_progress": {
+        "event": "progress",
+        "mode": "quant4_deferred",
+        "processed": 24576,
+        "total": 32768,
+        "elapsed_s": 760.0877858750173
+      },
+      "stderr": "qwen32b-deferred-32k.stderr.txt",
+      "physical_peak_bytes": null,
+      "physical_peak_note": "No /usr/bin/time -l resource footer was available after the guarded stop."
+    }
+  },
+  "limits": [
+    "Fixed-length performance ignores EOS; the four-fact score reads the first JSON object only. This is not general code-analysis quality evidence.",
+    "System swap counters and pressure samples are system-wide, not isolated per-process I/O measurements. No unrelated apps were closed and swap was not cleared.",
+    "A stopped run is censored at the pre-specified limit; it is not proof of OOM or impossibility.",
+    "Whole-process physical peaks include loading and warmup. Request timers exclude them.",
+    "The tokenizer warning in the stopped run refers to the source pool before truncation. Its progress total confirms an actual inference length of 32768 tokens."
+  ],
+  "completed_prompt_hashes_agree": true
+}

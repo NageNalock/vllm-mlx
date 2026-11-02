@@ -2,18 +2,18 @@
   "source_commit": "8f0b640",
   "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
   "focused": {
-    "tests": 121,
+    "tests": 137,
     "errors": 0,
     "failures": 0,
     "skipped": 0,
-    "passed": 121
+    "passed": 137
   },
   "full_suite": {
-    "tests": 3926,
+    "tests": 3942,
     "errors": 3,
     "failures": 14,
     "skipped": 28,
-    "passed": 3881
+    "passed": 3897
   },
   "base_full_suite": {
     "tests": 3883,
@@ -50,7 +50,7 @@
     "mypy_candidate_errors": 722,
     "mypy_added_errors": 0
   },
-  "numerical_checks": "32 combinations of Llama/Qwen3, FP32/FP16, 4/8-bit caches and prompt lengths 1/17/19/33 compare every generated logprob vector, token, quantized cache array, offset and processor history with standard deferred quantization.",
+  "numerical_checks": "48 combinations of Llama/Qwen3, FP32/FP16/BF16, 4/8-bit caches and prompt lengths 1/17/19/33 compare every generated logprob vector, token, quantized cache array, offset and processor history with standard deferred quantization. BF16 logprobs are converted exactly to FP32 for NumPy comparison; cache arrays are compared in their native dtype.",
   "real_model_quality_parity": {
     "examples": 48,
     "exact_output_matches": 48,
@@ -60,6 +60,19 @@
   "cancellation_comparison": "cancellation_comparison.json",
   "notes": [
     "The first HTTP smoke assumed immediate admission after disconnect and saw a busy 503. A direct localhost comparison reproduces 503 then 200 in both untouched base and candidate, each recovering in about 0.71s. No production code was changed; the final smoke explicitly waits only on the known text_generation_busy response.",
-    "The original source has 14 full-suite failures and three setup errors in this offline environment; candidate failure IDs match exactly."
-  ]
+    "The original source has 14 full-suite failures and three setup errors in this offline environment; candidate failure IDs match exactly.",
+    "The first full run after adding BF16 had an additional cache-lifetime assertion failure. Reference tracing identified an earlier test's BatchGenerator destructor exception pinning the active request frames. The test now collects old generators before the request; its strict release assertion is unchanged. Final focused and full results above include this isolation change; runtime sources remain unchanged."
+  ],
+  "test_source_sha256": "2aee56cf059f58d52cea353584b668220bb9cb025e65364042552a219fe68073",
+  "final_test_evidence": {
+    "layerwise-focused-bf16": {
+      "log_sha256": "3f4189f186cf790e70e73513d2ca153f2c1b3335860e0d080f8185e88974aa3d",
+      "xml_sha256": "b656495c234173b8601469d11f3cee593dc6d967fbc04744f0c182c36041f589"
+    },
+    "layerwise-full-final": {
+      "log_sha256": "04b2c1f8fc93add67f91c05c029c3f88b1d14c08ea912d44ceaadc7f70446b69",
+      "xml_sha256": "56f461bfbed77819aa23efa1c770d19cce24eda6993063a592b0edc550f5ae86"
+    }
+  },
+  "cancellation_test_isolation": "cancellation_test_isolation.json"
 }

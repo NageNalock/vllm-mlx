@@ -93,6 +93,41 @@ Existing system swap was not cleared; swap-out deltas are retained in the
 The final standalone benchmark reproduces the earlier native-core measurement's
 prompt, output, first-logprob hashes, and KV sizes.
 
+## Qwen3 32B capacity check
+
+A separate, pre-specified check uses Qwen3-32B with 4-bit model weights, a
+32,768-token code-context prompt, and 128 fixed output tokens. Thinking is
+disabled. The task retrieves four known configuration values; it does not
+establish general code-analysis quality. All three modes run sequentially on
+the same 32 GiB machine, starting at normal system memory pressure.
+
+| Policy | Result | Physical peak | First token | Decode | Four-fact recovery |
+|---|---|---:|---:|---:|---:|
+| Early 4-bit, start=5000 | Completed | 22.90 GiB | 1104.24 s | 4.27 tok/s | 4/4 |
+| Deferred 4-bit | Stopped at the 20-minute budget | Unavailable | Unavailable | Unavailable | Unavailable |
+| Layerwise 4-bit | Completed | 21.91 GiB | 1125.30 s | 3.68 tok/s | 4/4 |
+
+The existing early policy already completes this workload. The layerwise path
+therefore does **not** demonstrate a newly enabled model tier. Its 18.8-minute
+wait and 3.68 tok/s also fall short of the desired few-minute prefill and fluent
+generation. System-wide swap-out increased by 3.86 GiB in the early run and
+7.03 GiB in the layerwise run. These are single-run observations with live system
+state, not isolated per-process I/O or reliable small latency differences.
+
+The deferred run's last logged progress was 24,576 of 32,768 tokens. The guard
+counts loading and warmup, whereas request timings exclude them. It stopped
+the benchmark process group after the pre-specified duration; no final
+answer or process-peak footer was available. This is censored evidence, not an
+OOM result or proof that a longer run could never finish. No memory limits were
+changed, swap was not cleared, and unrelated applications were left running.
+
+These are standalone engine measurements. The HTTP smoke uses the Llama
+checkpoint. The tokenizer warning retained in the stopped run refers to the
+untruncated source pool; inference uses 32,768 tokens, as its progress records
+confirm. See the [frozen protocol](../../benchmarks/results/layerwise-kv/large_model_protocol.json),
+[raw status and pressure trace](../../benchmarks/results/layerwise-kv/large_model_status.json),
+and [measurement summary](../../benchmarks/results/layerwise-kv/qwen32b-32k-summary.json).
+
 ## Quality and numerical agreement
 
 The comparison contains 16 Qasper, 16 HotpotQA, and 16 LCC examples. Qasper and
@@ -106,14 +141,22 @@ hashes and first-logprob hashes in **all 48 cases**. See the
 [parity summary](../../benchmarks/results/layerwise-kv/quality-vs-deferred.json).
 The underlying 4-bit policy differs from full KV:
 
-| Metric | Full KV | Deferred / layerwise 4-bit | Change |
-|---|---:|---:|---:|
-| Qasper word F1 | 52.69 | 52.69 | 0.00 pp |
-| HotpotQA word F1 | 58.31 | 56.44 | -1.88 pp |
-| LCC first-line similarity | 35.96 | 37.95 | +1.98 pp |
-| Equal-weight mean of these scores | 48.99 | 49.03 | +0.04 pp |
+| Metric | Full KV | Early 4-bit, start=0 | Deferred / layerwise 4-bit | Deferred change vs full |
+|---|---:|---:|---:|---:|
+| Qasper word F1 | 52.69 | 45.37 | 52.69 | 0.00 pp |
+| HotpotQA word F1 | 58.31 | 57.66 | 56.44 | -1.88 pp |
+| LCC first-line similarity | 35.96 | 33.63 | 37.95 | +1.98 pp |
+| Equal-weight mean of these scores | 48.99 | 45.55 | 49.03 | +0.04 pp |
 
-The overall paired bootstrap 95% interval is [-1.61, +1.34] points. In
+The early start=0 baseline illustrates why preserving dense prefill can matter:
+it has a similarly small cache, but different prefill arithmetic and more answer
+changes in this screen. Its comparison is preserved in
+[`early0-vs-full.json`](../../benchmarks/results/layerwise-kv/early0-vs-full.json).
+This descriptive result does not establish that layerwise quantization beats
+every early-quantization threshold or generalizes to other workloads.
+
+For deferred / layerwise 4-bit versus full KV, the overall paired bootstrap 95%
+interval is [-1.61, +1.34] points. In
 `hotpotqa-65`, full KV answers "Vernon L. Smith"; both quantized implementations
 add another person, reducing word F1 from 0.8 to 0.5. This remains a real
 regression. Code string similarity is not functional correctness, and its gains
@@ -121,8 +164,8 @@ must not be interpreted as better working code. All outputs and individual
 changes are in the [full-KV comparison](../../benchmarks/results/layerwise-kv/quality-vs-full.json).
 
 The 48 examples contain 47 distinct contexts because two Qasper questions share
-a paper. Bootstrap intervals resample questions, not document clusters. Passing
-this small screen does not establish universal non-inferiority. Four-bit model
+a paper. Bootstrap intervals resample questions, not document clusters. These
+observations do not establish universal non-inferiority. Four-bit model
 weights are used throughout; these measurements do not establish the same
 tradeoff for every checkpoint or KV bit width.
 
@@ -136,17 +179,18 @@ replays its already computed hidden state once. Subsequent decoding uses the
 original decoder and native quantized caches. The request-local decoder is
 restored on completion, errors, and cancellation.
 
-There are 121 passing focused/lifecycle tests. Thirty-two numerical combinations
-cover Llama/Qwen3, FP16/FP32, 4/8-bit KV, single-token and multi-chunk prompts;
+There are 137 passing focused/lifecycle tests. Forty-eight numerical combinations
+cover Llama/Qwen3, FP16/BF16/FP32, 4/8-bit KV, single-token and multi-chunk prompts;
 they compare every generated logprob vector, token, cache array, offset, and
 processor input against ordinary deferred quantization. The full offline suite
-has 3881 passes; its 14 failures and three setup errors exactly match the
+has 3897 passes; its 14 failures and three setup errors exactly match the
 untouched base. Ruff and Black pass; the same mypy command reports 722 existing
 errors on both base and candidate, with no additions.
 
 Real-checkpoint HTTP checks cover both endpoints, streaming and non-streaming,
-invalid options, rejection before SSE headers, disconnect, and the following
-ordinary request. Both base and candidate briefly return the existing
+invalid options, rejection before SSE headers, disconnect after the first content
+chunk, and the following ordinary request. Both base and candidate briefly return
+the existing
 `text_generation_busy` 503 during disconnect cleanup, then recover in about
 0.71 seconds with unchanged ordinary output. See
 [`verification.json`](../../benchmarks/results/layerwise-kv/verification.json).

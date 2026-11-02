@@ -99,5 +99,32 @@
       "destination": "native-llama-32k.time.txt",
       "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings."
     }
-  ]
+  ],
+  "early0_summary": {
+    "source": [
+      "full-validation.jsonl",
+      "early0-validation.jsonl"
+    ],
+    "destination": "early0-vs-full.json",
+    "method": "Concatenate all records and run benchmarks/summarize_cache_quality.py with --baseline full --candidate quant4 and validation_manifest.json. Replace only the temporary input pathname in the summary with the two repository-relative source filenames."
+  },
+  "capacity_time_records": [
+    {
+      "source": "qwen32b-layerwise-32k.stderr",
+      "source_sha256": "a06e2b92dfd5142d0a54ca23371ccdb667b15bda7db075ea6c4bcacc7a9e219e",
+      "destination": "qwen32b-layerwise-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings about the untruncated source pool. Actual inference uses the recorded 32768 tokens."
+    },
+    {
+      "source": "qwen32b-early5000-32k.stderr",
+      "source_sha256": "deb78aaaee4e15f29ba1614a347ac8fabcc48e327cabb126672d38579c4eece0",
+      "destination": "qwen32b-early5000-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings about the untruncated source pool. Actual inference uses the recorded 32768 tokens."
+    }
+  ],
+  "capacity_status_format": {
+    "source_sha256": "9abfb401f3718afba53e51099852831e9d62a33ac8a32d416ffa98f73c0e18fe",
+    "destination": "large_model_status.json",
+    "transformation": "Inline each pressure-sample object to reduce diff size; all keys, values, sample order and samples are unchanged. json.dumps(parsed_status, indent=2) plus newline reconstructs the original status file exactly."
+  }
 }

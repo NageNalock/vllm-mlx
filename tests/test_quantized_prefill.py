@@ -27,7 +27,7 @@ def local_generation_stream(monkeypatch):
 
 
 @pytest.mark.parametrize("model_module", [llama, qwen3])
-@pytest.mark.parametrize("dtype", [mx.float32, mx.float16])
+@pytest.mark.parametrize("dtype", [mx.float32, mx.float16, mx.bfloat16])
 @pytest.mark.parametrize("length", [1, 17, 19, 33])
 @pytest.mark.parametrize("bits", [4, 8])
 def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
@@ -58,7 +58,7 @@ def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
         return logits
 
     reference = [
-        (t, np.array(p))
+        (t, np.array(p.astype(mx.float32)))
         for t, p in generate_step(
             tokens,
             model,
@@ -79,7 +79,7 @@ def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
 
     with quantized_prompt_cache(model, tokens, bits, prefill_step_size=8) as cache:
         actual = [
-            (t, np.array(p))
+            (t, np.array(p.astype(mx.float32)))
             for t, p in generate_step(
                 tokens,
                 model,
@@ -99,7 +99,8 @@ def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
             first, second = tree_flatten(a.state), tree_flatten(b.state)
             assert len(first) == len(second)
             for (_, x), (_, y) in zip(first, second):
-                np.testing.assert_array_equal(np.array(x), np.array(y))
+                assert x.dtype == y.dtype
+                assert mx.array_equal(x, y).item()
     assert model.model is decoder
 
 
@@ -209,7 +210,8 @@ def tiny_engine(tiny_wrapper, monkeypatch):
 async def test_chat_cancellation_releases_caches_and_restores_model(
     tiny_engine, monkeypatch
 ):
-
+    # Earlier generators' destructor errors must not pin this request's frames.
+    gc.collect()
     refs = []
     factory = KVCache.to_quantized
 

@@ -1,0 +1,70 @@
+{
+  "test": "tests/test_quantized_prefill.py::test_chat_cancellation_releases_caches_and_restores_model",
+  "observed_failure": "The immediate cache weak-reference assertion failed in full-suite execution; the focused and collection-only runs passed.",
+  "cause": "A BatchGenerator left by earlier tests raised during finalization on a foreign GPU stream while the request was executing. The retained unraisable-exception traceback pinned the active request frames and their caches. This feature uses SimpleEngine and does not create a BatchGenerator.",
+  "exception": "RuntimeError: There is no Stream(gpu, 29) in current thread.",
+  "reference_chain": [
+    {
+      "function": "_LayerwiseDecoder.__call__",
+      "file": "vllm_mlx/quantized_prefill.py",
+      "line": 57
+    },
+    {
+      "function": "LlamaModel.__call__",
+      "file": "mlx_lm/models/llama.py",
+      "line": 197
+    },
+    {
+      "function": "TransformerBlock.__call__",
+      "file": "mlx_lm/models/llama.py",
+      "line": 148
+    },
+    {
+      "function": "Attention.__call__",
+      "file": "mlx_lm/models/llama.py",
+      "line": 102
+    },
+    {
+      "function": "QuantizedKVCache.update_and_fetch",
+      "file": "mlx_lm/models/cache.py",
+      "line": 283
+    },
+    {
+      "function": "tree_map",
+      "file": "mlx/utils.py",
+      "line": 52
+    },
+    {
+      "function": "tree_map.<locals>.<genexpr>",
+      "file": "mlx/utils.py",
+      "line": 50
+    },
+    {
+      "function": "tree_map",
+      "file": "mlx/utils.py",
+      "line": 52
+    },
+    {
+      "function": "tree_map.<locals>.<genexpr>",
+      "file": "mlx/utils.py",
+      "line": 50
+    },
+    {
+      "function": "BatchGenerator.__del__",
+      "file": "mlx_lm/generate.py",
+      "line": 1562
+    },
+    {
+      "function": "__del__",
+      "line": 1562
+    }
+  ],
+  "second_gc_after_failure": {
+    "live_before": 2,
+    "live_after": 2
+  },
+  "isolation_change": "Collect earlier tests' unreachable generators before starting the cancellation request. The existing strict cache-release assertion remains unchanged; no runtime code or algorithm was changed.",
+  "final_results": "verification.json",
+  "diagnostic_sha256": "3b38ffa8cbfda9cebe8219dafd29c94d0185dcea4f853f2a7c445740a81f7e15",
+  "original_failure_log_sha256": "b487a11a3f20eecd9643efff4c6e1c31d717bfcdd6e515d212267719b27d097f"
+}
