@@ -54,7 +54,13 @@ def emit(record):
 
 def measure(model, tokenizer, predictor, tokens, mode, args, max_tokens, stop_at_eos):
     context = (
-        kvzap_prompt_cache(model, len(tokens), predictor, args.threshold)
+        kvzap_prompt_cache(
+            model,
+            tokens,
+            predictor,
+            args.threshold,
+            prefill_step_size=args.prefill_step_size,
+        )
         if mode == "kvzap"
         else nullcontext(make_prompt_cache(model))
     )
@@ -98,7 +104,7 @@ def measure_cache(model, tokenizer, tokens, mode, args, max_tokens, stop_at_eos,
         model,
         max_tokens=max_tokens,
         prompt_cache=cache,
-        prefill_step_size=args.prefill_step_size,
+        prefill_step_size=len(tokens) if mode == "kvzap" else args.prefill_step_size,
         kv_bits={"quant4": 4, "quant8": 8}.get(mode),
         quantized_kv_start=0,
         prompt_progress_callback=progress,

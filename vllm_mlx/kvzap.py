@@ -47,9 +47,8 @@ class KVzapCache(_BaseCache):
     This cache does not support batching, prefix reuse, or serialization.
     """
 
-    def __init__(self, scorer, prompt_length, threshold=-7.0, window_size=128):
+    def __init__(self, scorer, threshold=-7.0, window_size=128):
         self.scorer = scorer
-        self.prompt_length = prompt_length
         self.threshold = threshold
         self.window_size = window_size
         self.offset = 0
@@ -60,10 +59,8 @@ class KVzapCache(_BaseCache):
     def score(self, hidden_states):
         if hidden_states.shape[0] != 1:
             raise ValueError("KVzap supports one request at a time")
-        if self._heads is None and self.offset < self.prompt_length:
+        if self._heads is None:
             self._scores.append(self.scorer(hidden_states).transpose(0, 2, 1))
-            # Release each layer's input before evaluating later layers.
-            mx.eval(self._scores[-1])
 
     def compact(self):
         keys = self._cache.keys[..., : self._cache.offset, :]
@@ -88,9 +85,6 @@ class KVzapCache(_BaseCache):
         self._scores = []
 
     def update_and_fetch(self, keys, values):
-        if self._heads is None and self.offset >= self.prompt_length:
-            # Complete dense prefill before pruning, as in the reference method.
-            self.compact()
         self.offset += keys.shape[2]
         if self._heads is None:
             return self._cache.update_and_fetch(keys, values)
@@ -143,9 +137,7 @@ class KVzapCache(_BaseCache):
         return sum(c.nbytes for c in caches) + sum(s.nbytes for s in self._scores)
 
 
-def make_kvzap_cache(
-    model, scorer_path, prompt_length, threshold=-7.0, window_size=128
-):
+def make_kvzap_cache(model, scorer_path, threshold=-7.0, window_size=128):
     """Load a released linear KVzap predictor for a matching Llama model."""
     from mlx_lm.models.llama import Model
 
@@ -160,8 +152,8 @@ def make_kvzap_cache(
         or config["output_dim"] != model.args.num_key_value_heads
     ):
         raise ValueError("KVzap requires a matching linear predictor and Llama model")
-    if prompt_length < 1 or window_size < 1:
-        raise ValueError("KVzap requires a positive prompt length and window")
+    if window_size < 1:
+        raise ValueError("KVzap requires a positive window")
     weights = mx.load(str(scorer_path / "model.safetensors"))
     dtype = model.layers[0].input_layernorm.weight.dtype
     caches = []
@@ -169,7 +161,7 @@ def make_kvzap_cache(
         scorer = nn.Linear(config["input_dim"], config["output_dim"])
         scorer.weight = weights[f"layers.{i}.weight"].astype(dtype)
         scorer.bias = weights[f"layers.{i}.bias"].astype(dtype)
-        caches.append(KVzapCache(scorer, prompt_length, threshold, window_size))
+        caches.append(KVzapCache(scorer, threshold, window_size))
     mx.eval([c.scorer.parameters() for c in caches])
     return caches
 
@@ -195,22 +187,93 @@ class _KVzapAttention(nn.Module):
         return attention.o_proj(output.transpose(0, 2, 1, 3).reshape(batch, length, -1))
 
 
+class _KVzapDecoder(nn.Module):
+    """Finish dense prefill for each layer before compacting that layer's KV."""
+
+    def __init__(self, original, tokens, step_size):
+        super().__init__()
+        self.original = original
+        self.tokens = tokens
+        self.step_size = step_size
+        self.prefilled = False
+        self.pending_output = None
+
+    @property
+    def layers(self):
+        return self.original.layers
+
+    @property
+    def embed_tokens(self):
+        return self.original.embed_tokens
+
+    def __call__(self, inputs, cache=None, input_embeddings=None):
+        if self.pending_output is not None:
+            output = self.pending_output
+            self.pending_output = None
+            return output
+        if self.prefilled:
+            return self.original(inputs, cache, input_embeddings)
+        length = len(self.tokens)
+        if inputs.shape[1] not in (length - 1, length):
+            raise ValueError("KVzap requires outer prefill_step_size >= prompt length")
+        h = self.original.embed_tokens(mx.array(self.tokens)[None])
+        chunks = [
+            (start, min(start + self.step_size, length - 1))
+            for start in range(0, length - 1, self.step_size)
+        ] + [(length - 1, length)]
+        for layer, layer_cache in zip(self.layers, cache):
+            outputs = []
+            for start, end in chunks:
+                output = layer(
+                    h[:, start:end],
+                    "causal" if end - start > 1 else None,
+                    cache=layer_cache,
+                )
+                mx.eval(output, layer_cache.state)
+                outputs.append(output)
+            h = mx.concatenate(outputs, axis=1)
+            mx.eval(h)
+            del outputs
+            layer_cache.compact()
+            mx.clear_cache()
+        output = self.original.norm(h[:, -1:])
+        mx.eval(output)
+        self.prefilled = True
+        self.tokens = None
+        if inputs.shape[1] == length - 1:
+            # MLX-LM samples from a separate call for the final prompt token.
+            self.pending_output = output
+        return output
+
+
 @contextmanager
-def kvzap_prompt_cache(model, prompt_length, scorer_path=None, threshold=-7.0):
+def kvzap_prompt_cache(
+    model, prompt, scorer_path=None, threshold=-7.0, prefill_step_size=2048
+):
     """Use KVzap for one request, restoring attention modules on exit.
 
     The caller must serialize access to the model while this context is active,
-    as SimpleEngine does for generation. No global MLX-LM patches are needed.
+    as SimpleEngine does for generation. The outer generation loop must receive
+    prefill_step_size=len(prompt); this context chunks each layer internally.
+    No global MLX-LM patches are needed.
     """
     if scorer_path is None:
         validate_kvzap_model(model)
         scorer_path = predictor_path()
-    caches = make_kvzap_cache(model, scorer_path, prompt_length, threshold)
-    originals = [layer.self_attn for layer in model.layers]
+    if len(prompt) < 1 or prefill_step_size < 1:
+        raise ValueError(
+            "KVzap requires a non-empty prompt and positive prefill_step_size"
+        )
+    caches = make_kvzap_cache(model, scorer_path, threshold)
+    decoder = model.model
+    layers = model.layers
+    originals = [layer.self_attn for layer in layers]
     try:
-        for layer, attention in zip(model.layers, originals):
+        for layer, attention in zip(layers, originals):
             layer.self_attn = _KVzapAttention(attention)
+        model.model = _KVzapDecoder(decoder, prompt, prefill_step_size)
         yield caches
     finally:
-        for layer, attention in zip(model.layers, originals):
+        model.model = decoder
+        for layer, attention in zip(layers, originals):
             layer.self_attn = attention

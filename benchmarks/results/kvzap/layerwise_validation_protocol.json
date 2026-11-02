@@ -1,0 +1,55 @@
+{
+  "frozen_at_utc": "2026-11-02T13:58:17.534994+00:00",
+  "variant": "Full-precision prefill one layer at a time, in 2048-token chunks plus a final single token; compact only after all prompt queries in that layer. Replay the already computed final prompt state once for MLX-LM sampling. Generated KV remains unpruned.",
+  "threshold": -7.0,
+  "protected_recent_tokens": 128,
+  "prefill_step_size": 2048,
+  "validation_cases": 48,
+  "validation_modes": [
+    "full",
+    "quant4",
+    "kvzap"
+  ],
+  "quality_gates_vs_full": {
+    "maximum_overall_mean_loss_pp": 1.0,
+    "maximum_per_dataset_mean_loss_pp": 3.0
+  },
+  "quality_reporting": "Report all individual regressions and paired bootstrap intervals; passing point-estimate gates is not a proof of non-inferiority. The 4-bit baseline is a descriptive comparison, not a threshold-tuning target.",
+  "early_stop": "Stop for futility if a completed dataset breaches its pre-specified gate. Retain every completed output and state the incomplete sample count.",
+  "selection": "Seed 20261103; exclude all previously selected IDs and their document contexts. 16 per dataset; Qasper/LCC include 6 examples at 2K-4K, 6 at 4K-8K, 4 at 8K-16K; HotpotQA includes 16 at 8K-16K.",
+  "known_development_regressions": [
+    "lcc-412: minor code-similarity loss",
+    "qasper-130: omitted method details; -18.17 pp word F1; remains a real pruning failure"
+  ],
+  "rejected_candidate": "8-bit prefill version at d1735fa failed the complete 16-case Qasper subset (-6.79 pp) and was stopped after 21 paired cases. Do not relabel those cases held-out for the revised candidate.",
+  "performance_gates_vs_fused_8bit_at_32k": {
+    "minimum_decode_speedup": 1.25,
+    "minimum_resident_kv_reduction": 0.2
+  },
+  "performance_reporting": "Also compare full KV and fused 4-bit KV, keep TTFT/whole-request/decode metrics separate, distinguish MLX allocation from physical memory. No larger-model claim.",
+  "source_sha256": {
+    "vllm_mlx/kvzap.py": "90077fd07241e8a94bf7245e23e4ba52b7d5c196717e3055f92738aa9a00bd44",
+    "vllm_mlx/models/llm.py": "0f91017f0a186d935a6b5732ce4d1a2fbd740ece0b1bda09b6dfe7db3f546a6f",
+    "vllm_mlx/engine/simple.py": "182aaf671f43771e1ff037ff34bb7867f739ac59a1dfbbc63ca050a0ad21f3ad",
+    "vllm_mlx/api/models.py": "9ca2894b7de2f18f7eef9363a9ce267ea0d8cefa7c9d221dddf7aeb57ed2383b",
+    "vllm_mlx/server.py": "a616471d0a7c28f27c72772fc815b9e025b304bd8a7368d51bc75b3648a0a0d8",
+    "benchmarks/bench_kvzap.py": "461c20bf89203e06ed3d390822f76a82963b9287545faaa2023fe295cedaee4f",
+    "benchmarks/kvzap_quality.py": "0c40b843a5826cf5f04090ee098dae06126cc814c126d674050c115e68c10e55",
+    "benchmarks/kvzap_memory.py": "e47122ef3f952eab90e57a92ade39d9d9ed197abbe6b42cb71e65fea46ad6c20",
+    "benchmarks/select_kvzap_cases.py": "253e67a72d1a8fb76369d806d655871d162896bd45629ad34fa97f2cf378257c",
+    "benchmarks/results/kvzap/dense_validation_manifest.json": "5541bc7b47bdc128ac636f493fd222a1f9d586021cec4d0eca48f969daab5cfe"
+  },
+  "supersedes": "dense_validation_protocol.json; no samples from dense_validation_manifest.json have been evaluated yet. Threshold, window, data selection, metrics, and quality gates are unchanged.",
+  "numerical_checks": "Exact first-logit equality in 32K real-model measurements and multi-chunk tiny-model tests; the 128-token output matches the earlier dense-prefill pruning implementation.",
+  "implementation_cleanup": "The prefill controller explicitly compacts each layer; obsolete automatic compaction timing and prototype entry points were removed.",
+  "additional_performance": {
+    "prompt_tokens": 32768,
+    "generation_tokens": 1024,
+    "modes": [
+      "full",
+      "quant4",
+      "kvzap"
+    ],
+    "condition": "Run only after the complete fresh quality screen passes."
+  }
+}

@@ -205,6 +205,7 @@ class MLXLanguageModel:
             all_processors = list(logits_processors) + all_processors
 
         prompt, cache_context = self._prompt_cache_context(prompt, None, kvzap)
+        generation_kwargs = {"prefill_step_size": len(prompt)} if kvzap else {}
         with cache_context as prompt_cache:
             output_text = generate(
                 self.model,
@@ -215,6 +216,7 @@ class MLXLanguageModel:
                 logits_processors=all_processors if all_processors else None,
                 prompt_cache=prompt_cache,
                 verbose=False,
+                **generation_kwargs,
             )
 
         # Tokenize output to get token IDs
@@ -243,7 +245,7 @@ class MLXLanguageModel:
                 self.tokenizer.bos_token
             )
             prompt = self.tokenizer.encode(prompt, add_special_tokens=add_special)
-        return prompt, kvzap_prompt_cache(self.model, len(prompt))
+        return prompt, kvzap_prompt_cache(self.model, prompt)
 
     def stream_generate(
         self,
@@ -308,6 +310,8 @@ class MLXLanguageModel:
         prompt, cache_context = self._prompt_cache_context(prompt, prompt_cache, kvzap)
         with cache_context as prompt_cache:
             mtp_kwargs = {}
+            if kvzap:
+                mtp_kwargs["prefill_step_size"] = len(prompt)
             if self._mtp:
                 mtp_kwargs["num_draft_tokens"] = self._mtp_num_draft_tokens
             if prompt_cache is not None:

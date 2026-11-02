@@ -13,7 +13,7 @@ import mlx.core as mx
 import mlx.nn as nn
 import numpy as np
 
-from vllm_mlx.kvzap import KVzapCache, _KVzapAttention
+from vllm_mlx.kvzap import KVzapCache, _KVzapAttention, _KVzapDecoder
 from mlx_lm.models.llama import Model, ModelArgs
 
 
@@ -29,12 +29,13 @@ class TestKVzap(unittest.TestCase):
         )[None]
         scorer = nn.Linear(heads, heads, bias=False)
         scorer.weight = mx.eye(heads)
-        cache = KVzapCache(scorer, length, window_size=2)
+        cache = KVzapCache(scorer, window_size=2)
         k = mx.random.normal((1, heads, length, dim))
         v = mx.random.normal((1, heads, length, dim))
         cache.score(scores)
         cache.update_and_fetch(k, v)
         mx.eval(cache.state)
+        cache.compact()
 
         # Two new queries test bottom-right causal alignment after head pruning.
         q = mx.random.normal((1, heads * 2, 2, dim))
@@ -85,14 +86,15 @@ class TestKVzap(unittest.TestCase):
         tokens = mx.random.randint(0, 64, (1, 19))
         full = [KVCache() for _ in model.layers]
         compressed = [
-            KVzapCache(nn.Linear(128, 1), 17, threshold=-float("inf"))
-            for _ in model.layers
+            KVzapCache(nn.Linear(128, 1), threshold=-float("inf")) for _ in model.layers
         ]
         for start, end in [(0, 8), (8, 16), (16, 17)]:
             expected = model(tokens[:, start:end], cache=full)
             actual = model(tokens[:, start:end], cache=compressed)
             np.testing.assert_allclose(np.array(actual), np.array(expected), atol=1e-5)
         self.assertTrue(all(c._heads is None for c in compressed))
+        for cache in compressed:
+            cache.compact()
         expected = model(tokens[:, 17:19], cache=full)
         actual = model(tokens[:, 17:19], cache=compressed)
         np.testing.assert_allclose(np.array(actual), np.array(expected), atol=1e-5)
@@ -102,11 +104,12 @@ class TestKVzap(unittest.TestCase):
         scorer = nn.Linear(64, 2)
         scorer.weight = mx.zeros((2, 64))
         scorer.bias = mx.full((2,), -8.0)
-        cache = KVzapCache(scorer, 2048, window_size=128)
+        cache = KVzapCache(scorer, window_size=128)
         cache.score(mx.zeros((1, 2048, 64)))
         cache.update_and_fetch(mx.ones((1, 2, 2048, 64)), mx.ones((1, 2, 2048, 64)))
         original = cache.nbytes
         mx.eval(cache.state)
+        cache.compact()
         cache.update_and_fetch(mx.zeros((1, 2, 1, 64)), mx.zeros((1, 2, 1, 64)))
         self.assertLess(cache.nbytes, original / 4)
         self.assertEqual([c.offset for c in cache._heads], [129, 129])
@@ -120,6 +123,90 @@ def local_generation_stream(monkeypatch):
 
     module = import_module("mlx_lm.generate")
     monkeypatch.setattr(module, "generation_stream", mx.new_stream(mx.default_device()))
+
+
+@pytest.mark.parametrize("length", [1, 17, 19])
+@pytest.mark.parametrize("prune", [False, True])
+def test_layerwise_prefill_preserves_logits_positions_and_processor_history(
+    length, prune
+):
+    from mlx_lm.generate import generate_step
+    from mlx_lm.models.cache import KVCache
+
+    mx.random.seed(9)
+    model = Model(
+        ModelArgs(
+            model_type="llama",
+            hidden_size=128,
+            num_hidden_layers=3,
+            intermediate_size=256,
+            num_attention_heads=2,
+            num_key_value_heads=1,
+            rms_norm_eps=1e-5,
+            vocab_size=64,
+        )
+    )
+    mx.eval(model.parameters())
+    tokens = mx.random.randint(0, 64, (length,))
+    reference_histories = []
+
+    def record_reference(history, logits):
+        reference_histories.append(history.tolist())
+        return logits
+
+    reference = [
+        (token, np.array(logprobs))
+        for token, logprobs in generate_step(
+            tokens,
+            model,
+            max_tokens=4,
+            prefill_step_size=8,
+            prompt_cache=[KVCache() for _ in model.layers],
+            logits_processors=[record_reference],
+        )
+    ]
+    decoder = model.model
+    caches = []
+    for layer in model.layers:
+        layer.self_attn = _KVzapAttention(layer.self_attn)
+        scorer = nn.Linear(128, 1)
+        scorer.weight = mx.zeros((1, 128))
+        scorer.bias = mx.array([-8.0])
+        caches.append(
+            KVzapCache(
+                scorer,
+                threshold=-7 if prune else -float("inf"),
+                window_size=2,
+            )
+        )
+    model.model = _KVzapDecoder(decoder, tokens, 8)
+    histories = []
+
+    def record_history(history, logits):
+        histories.append(history.tolist())
+        return logits
+
+    actual = [
+        (token, np.array(logprobs))
+        for token, logprobs in generate_step(
+            tokens,
+            model,
+            max_tokens=4,
+            prefill_step_size=length,
+            prompt_cache=caches,
+            logits_processors=[record_history],
+        )
+    ]
+    np.testing.assert_array_equal(actual[0][1], reference[0][1])
+    assert histories[0] == reference_histories[0]
+    assert all(c.offset == length + 4 for c in caches)
+    if not prune:
+        assert histories == reference_histories
+        assert [t for t, _ in actual] == [t for t, _ in reference]
+        for (_, a), (_, b) in zip(actual, reference):
+            np.testing.assert_allclose(a, b, atol=1e-5)
+    elif length > 2:
+        assert all(c._heads[0].offset < c.offset for c in caches)
 
 
 @pytest.fixture
@@ -179,6 +266,7 @@ def tiny_wrapper(tmp_path, monkeypatch):
 
 def test_wrapper_restores_attention_on_close_error_and_next_request(tiny_wrapper):
     model = tiny_wrapper.model
+    decoder = model.model
     originals = [layer.self_attn for layer in model.layers]
     prompt = " ".join(str(i % 127 + 1) for i in range(160))
     baseline = list(tiny_wrapper.stream_generate(prompt, max_tokens=3, temperature=0))
@@ -188,6 +276,7 @@ def test_wrapper_restores_attention_on_close_error_and_next_request(tiny_wrapper
     next(stream)
     assert all(isinstance(layer.self_attn, _KVzapAttention) for layer in model.layers)
     stream.close()
+    assert model.model is decoder
     assert all(
         layer.self_attn is original for layer, original in zip(model.layers, originals)
     )
@@ -199,6 +288,7 @@ def test_wrapper_restores_attention_on_close_error_and_next_request(tiny_wrapper
 
     with pytest.raises(RuntimeError, match="processor failed"):
         list(tiny_wrapper.stream_generate(prompt, kvzap=True, logits_processors=[fail]))
+    assert model.model is decoder
     assert all(
         layer.self_attn is original for layer, original in zip(model.layers, originals)
     )
@@ -246,6 +336,7 @@ async def test_chat_cancellation_releases_caches_and_restores_model(
 
     monkeypatch.setattr(kvzap, "make_kvzap_cache", capture)
     model = tiny_engine._model.model
+    decoder = model.model
     originals = [layer.self_attn for layer in model.layers]
     messages = [
         {"role": "system", "content": "1 2 3"},
@@ -258,6 +349,7 @@ async def test_chat_cancellation_releases_caches_and_restores_model(
         assert refs and all(r()._heads[0].offset < r().offset for r in refs)
         await stream.aclose()
         gc.collect()
+        assert model.model is decoder
         assert all(r() is None for r in refs)
         assert all(
             layer.self_attn is original
