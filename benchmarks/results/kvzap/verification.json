@@ -1,0 +1,49 @@
+{
+  "candidate_commit": "56b6c8e",
+  "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+  "focused_tests": {
+    "passed": 142,
+    "deselected": 6
+  },
+  "lifecycle_tests": {
+    "passed": 78
+  },
+  "full_offline_suite": {
+    "candidate_passed": 3858,
+    "base_passed": 3838,
+    "failures": 14,
+    "setup_errors": 3,
+    "skipped": 28,
+    "deselected": 27,
+    "failure_ids_match_untouched_base": true,
+    "failure_ids": [
+      "tests/test_engine_core_stream_safety.py::test_engine_core_no_cross_thread_stream_error",
+      "tests/test_engine_core_thread_streams.py::test_engine_core_runs_all_scheduler_steps_on_one_worker_thread",
+      "tests/test_lifecycle_cli.py::TestLifecycleCli::test_serve_command_describes_lazy_startup_without_claiming_model_is_loaded",
+      "tests/test_lifecycle_cli.py::TestLifecycleCli::test_serve_command_preserves_mtp_scheduler_config_with_residency",
+      "tests/test_mcp_security.py::TestMCPConfigDiscovery::test_load_mcp_config_allows_explicit_path_in_cwd",
+      "tests/test_mcp_security.py::TestMCPConfigDiscovery::test_load_mcp_config_uses_user_config_directory",
+      "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_encoded_path_traversal_in_config_rejected",
+      "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_node_eval_in_config_rejected",
+      "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_valid_stdio_config",
+      "tests/test_memory_cache.py::test_save_load_roundtrip_through_provenance_subdir",
+      "tests/test_prefix_cache_scheduler_parity.py::test_arrays_cache_next_turn_matches_cold_when_coverage_is_unknown",
+      "tests/test_prefix_cache_scheduler_parity.py::test_identical_plain_kv_prompt_never_replays_a_supersequence",
+      "tests/test_scheduler_exact_cache_replay.py::test_real_batch_processors_see_the_same_history_after_replay[exact]",
+      "tests/test_scheduler_exact_cache_replay.py::test_real_batch_processors_see_the_same_history_after_replay[partial]",
+      "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_optimized_detokenizer_correctness",
+      "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_scheduler_uses_optimized_detokenizer",
+      "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_tokenizer_wrapper_has_optimized_detokenizer"
+    ]
+  },
+  "static_checks": {
+    "ruff": "passed on all changed Python files",
+    "black": "passed on all changed Python files",
+    "mypy_existing_diagnostics": 695,
+    "mypy_added_diagnostics": 0
+  },
+  "notes": [
+    "Three lifecycle tests using SimpleNamespace request fixtures were updated to include the new optional field default kvzap=False. Production handling continues to use the typed request schema.",
+    "A timing-sensitive client acceptance test failed in an earlier candidate run and in an isolated untouched-base run, then passed in both final full-suite runs."
+  ]
+}

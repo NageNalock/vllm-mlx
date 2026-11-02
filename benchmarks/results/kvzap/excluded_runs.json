@@ -1,0 +1,12 @@
+{
+  "runs": [
+    {
+      "file": "native-32k-quant8.jsonl",
+      "reason": "Overlapped briefly with native-32k-kvzap-eval; exclude timings and repeat in isolation."
+    },
+    {
+      "file": "native-32k-kvzap-eval.jsonl",
+      "reason": "Started before the preceding baseline process finished; terminated and excluded. Repeat with a new filename."
+    }
+  ]
+}

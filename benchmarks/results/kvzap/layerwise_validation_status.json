@@ -1,0 +1,8 @@
+{
+  "status": "running; snapshot for draft review",
+  "selected_cases": 48,
+  "completed_cases_at_snapshot": 16,
+  "snapshot_at_utc": "2026-11-02T14:31:27.113587+00:00",
+  "source_commit": "56b6c8e",
+  "note": "This file will be replaced by the final evaluation result. No quality-passing claim is made while evaluation is incomplete."
+}

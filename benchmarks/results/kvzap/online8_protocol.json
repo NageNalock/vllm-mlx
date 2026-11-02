@@ -1,0 +1,14 @@
+{
+  "variant": "Online 8-bit prefill pruning with a 2048-token recent window, followed by FP16 decode",
+  "status": "development only; evaluate before choosing the validation candidate",
+  "rationale": "Preserve a full prefill chunk for local code continuity while reducing old-cache attention work. This differs from published dense-prefill KVzap.",
+  "threshold": -7,
+  "window": 2048,
+  "chunk": 2048,
+  "quality_gates": "Same predeclared mean <=1 pp loss and per-dataset <=3 pp loss; validate on fresh examples after freezing.",
+  "alternative_performance_targets": {
+    "end_to_end_time_reduction_at_32k_min": 0.2,
+    "mlx_peak_reduction_vs_quant8_min": 0.15
+  },
+  "created_before_online8_results": true
+}

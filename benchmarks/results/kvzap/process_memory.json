@@ -1,0 +1,16 @@
+[
+  {
+    "file": "final-32k-quant8.jsonl",
+    "mode": "quant8",
+    "whole_process_peak_physical_footprint_bytes": 10223669880,
+    "measurement": "/usr/bin/time -l; includes model loading and warmup",
+    "system_swapout_delta_bytes": 0
+  },
+  {
+    "file": "final-32k-kvzap.jsonl",
+    "mode": "kvzap",
+    "whole_process_peak_physical_footprint_bytes": 10503016936,
+    "measurement": "/usr/bin/time -l; includes model loading and warmup",
+    "system_swapout_delta_bytes": 0
+  }
+]

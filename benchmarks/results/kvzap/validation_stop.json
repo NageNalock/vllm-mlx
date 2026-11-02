@@ -1,0 +1,33 @@
+{
+  "status": "failed; stopped early for futility",
+  "stopped_at_utc": "2026-11-02T12:42:50.024840+00:00",
+  "selected_cases": 48,
+  "completed_pairs": 21,
+  "completed_ids": [
+    "qasper-72",
+    "qasper-108",
+    "qasper-149",
+    "qasper-52",
+    "qasper-97",
+    "qasper-94",
+    "qasper-152",
+    "qasper-68",
+    "qasper-197",
+    "qasper-50",
+    "qasper-10",
+    "qasper-65",
+    "qasper-131",
+    "qasper-120",
+    "qasper-130",
+    "qasper-184",
+    "hotpotqa-6",
+    "hotpotqa-158",
+    "hotpotqa-195",
+    "hotpotqa-174",
+    "hotpotqa-41"
+  ],
+  "qasper_mean_loss_pp": 6.794361325611327,
+  "reason": "All 16 Qasper pairs completed and exceeded the pre-specified 3 pp per-dataset loss limit. Remaining datasets cannot change that failed gate. All completed outputs are retained; this is not a complete 48-case evaluation.",
+  "candidate_commit": "d1735fa",
+  "next_step": "Diagnose 8-bit prefill vs pruning, without tuning on these data and then labeling them held-out again."
+}

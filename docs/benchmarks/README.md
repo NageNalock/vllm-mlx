@@ -5,6 +5,7 @@ Performance benchmarks for vllm-mlx on Apple Silicon.
 ## Benchmark Types
 
 - [LLM Benchmarks](llm.md) - Text generation performance
+- [Experimental KVzap](kvzap.md) - Llama 3.1 8B prompt-cache pruning, quality, and memory tradeoffs
 - [Image Benchmarks](image.md) - Image understanding performance
 - [Video Benchmarks](video.md) - Video understanding performance
 

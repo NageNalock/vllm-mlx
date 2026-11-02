@@ -1,0 +1,28 @@
+{
+  "purpose": "Verify the streaming-throughput tradeoff against a denser low-memory alternative, and check a longer output before claiming end-to-end value.",
+  "candidate_unchanged": {
+    "threshold": -7.0,
+    "window_size": 128,
+    "pruning": "after complete dense prefill"
+  },
+  "additional_baseline": "4-bit KV with the same fused prefill optimization; use it to bound memory-efficiency claims.",
+  "performance_cases": [
+    {
+      "prompt_tokens": 32768,
+      "generation_tokens": 128,
+      "modes": [
+        "quant4"
+      ]
+    },
+    {
+      "prompt_tokens": 32768,
+      "generation_tokens": 1024,
+      "modes": [
+        "quant8",
+        "kvzap"
+      ]
+    }
+  ],
+  "quality": "Keep the already running fresh 48-case full-vs-KVzap evaluation unchanged. Any 4-bit quality screen must be labeled separately and not pooled with it.",
+  "claim": "Retain all results. Decode speedup is distinct from whole-request speedup; no claim of winning memory usage against all KV quantization levels."
+}

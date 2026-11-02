@@ -1,0 +1,73 @@
+{
+  "input": "/Users/mk/Documents/ChatGPT/llvm/vllm-mlx-kvzap/benchmarks/results/kvzap/dense-prefill-development.jsonl",
+  "baseline": "full",
+  "candidate": "kvzap",
+  "overall": {
+    "n": 12,
+    "baseline": 64.481448230326,
+    "candidate": 64.35357099247435,
+    "delta_pp": -0.12787723785166275,
+    "paired_bootstrap_95_ci_pp": [
+      -0.38363171355498826,
+      0.0
+    ],
+    "identical_outputs": 11,
+    "identical_first_logprobs": 12
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 4,
+      "baseline": 25.0,
+      "candidate": 25.0,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 4,
+      "identical_first_logprobs": 4
+    },
+    "lcc": {
+      "n": 4,
+      "baseline": 78.44434469097801,
+      "candidate": 78.06071297742302,
+      "delta_pp": -0.38363171355498826,
+      "paired_bootstrap_95_ci_pp": [
+        -1.1508951406649648,
+        0.0
+      ],
+      "identical_outputs": 3,
+      "identical_first_logprobs": 4
+    },
+    "qasper": {
+      "n": 4,
+      "baseline": 90.0,
+      "candidate": 90.0,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 4,
+      "identical_first_logprobs": 4
+    }
+  },
+  "regressions": [
+    {
+      "id": "lcc-412",
+      "dataset": "lcc",
+      "baseline": 0.9565217391304348,
+      "candidate": 0.9411764705882353,
+      "delta_pp": -1.534526854219953,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "da2 = Locale.objects.get(code='de')",
+      "candidate_text": "da = Locale.objects.get(code='da')",
+      "answers": [
+        "        de = Locale.objects.get(code='de')"
+      ]
+    }
+  ],
+  "improvements": [],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}

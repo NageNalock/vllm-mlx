@@ -133,6 +133,11 @@ response = client.completions.create(
 )
 ```
 
+The chat and completion endpoints accept experimental `extra_body={"kvzap": True}`
+for text-only `SimpleEngine` with Llama 3.1 8B Instruct. It prunes prompt KV after
+dense prefill and bypasses prefix reuse. See the [KVzap measurements and usage](../benchmarks/kvzap.md)
+for the supported checkpoint, quality regressions, and memory/latency tradeoffs.
+
 ### Models
 
 ```bash

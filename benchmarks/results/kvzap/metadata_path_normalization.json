@@ -1,0 +1,9 @@
+{
+  "files": [
+    "attribution-quant8.jsonl",
+    "dense-prefill-development.jsonl",
+    "attribution-dense-prefill.jsonl"
+  ],
+  "field": "metadata.arguments.manifest",
+  "change": "Repository-relative paths replace local absolute paths for portability. Prompts, outputs, hashes, scores, timings, and memory measurements are unchanged."
+}

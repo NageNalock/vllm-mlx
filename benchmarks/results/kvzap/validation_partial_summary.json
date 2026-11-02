@@ -1,0 +1,107 @@
+{
+  "input": "benchmarks/results/kvzap/validation.jsonl",
+  "baseline": "full",
+  "candidate": "kvzap",
+  "overall": {
+    "n": 21,
+    "baseline": 53.24717953674538,
+    "candidate": 48.070523288660574,
+    "delta_pp": -5.17665624808482,
+    "paired_bootstrap_95_ci_pp": [
+      -14.230333158904587,
+      0.16914874057731208
+    ],
+    "identical_outputs": 17,
+    "identical_first_logprobs": 0
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 5,
+      "baseline": 53.07017543859649,
+      "candidate": 53.07017543859649,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 5,
+      "identical_first_logprobs": 0
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 53.30249331741692,
+      "candidate": 46.5081319918056,
+      "delta_pp": -6.794361325611326,
+      "paired_bootstrap_95_ci_pp": [
+        -18.645384739134737,
+        0.22200772200772212
+      ],
+      "identical_outputs": 12,
+      "identical_first_logprobs": 0
+    }
+  },
+  "regressions": [
+    {
+      "id": "qasper-131",
+      "dataset": "qasper",
+      "baseline": 0.875,
+      "candidate": 0.0,
+      "delta_pp": -87.5,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "French, Spanish, Italian, Portuguese, Hebrew, Arabic, German, and English.",
+      "candidate_text": "Romance languages and Semitic languages.",
+      "answers": [
+        "English, French, German ",
+        "French, English, Spanish, Italian, Portuguese, Hebrew, Arabic"
+      ]
+    },
+    {
+      "id": "qasper-130",
+      "dataset": "qasper",
+      "baseline": 0.41025641025641024,
+      "candidate": 0.22857142857142856,
+      "delta_pp": -18.168498168498168,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Manual categorization of images, browser-based annotation tool, tagging descriptions with part-of-speech information, leveraging the structure of Flickr30K Entities, and Louvain clustering.",
+      "candidate_text": "Manual categorization of images, leveraging the structure of Flickr30K Entities, and applying Louvain clustering to the coreference graph.",
+      "answers": [
+        "spot patterns by just looking at a collection of images, tag all descriptions with part-of-speech information, I applied Louvain clustering",
+        "Looking for adjectives marking the noun \"baby\" and also looking for most-common adjectives related to certain nouns using POS-tagging"
+      ]
+    },
+    {
+      "id": "qasper-10",
+      "dataset": "qasper",
+      "baseline": 0.9230769230769231,
+      "candidate": 0.8571428571428571,
+      "delta_pp": -6.593406593406604,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Friends TV sitcom and Facebook messenger chats.",
+      "candidate_text": "Friends TV sitcom scripts and Facebook messenger chats.",
+      "answers": [
+        "Friends TV sitcom, Facebook messenger chats"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "qasper-68",
+      "dataset": "qasper",
+      "baseline": 0.34285714285714286,
+      "candidate": 0.3783783783783784,
+      "delta_pp": 3.552123552123554,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "The benchmark dataset is the Social Honeypot dataset, and its quality is not explicitly stated as high, but it is mentioned that it has been extensively explored in the paper.",
+      "candidate_text": "The benchmark dataset is the Social Honeypot dataset, and its quality is not explicitly stated as high, but it is described as a \"benchmark dataset\" which has been \"extensively explored\" in the paper.",
+      "answers": [
+        "Social Honeypot dataset (public) and Weibo dataset (self-collected); yes",
+        "Social Honeypot, which is not of high quality"
+      ]
+    }
+  ],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}
