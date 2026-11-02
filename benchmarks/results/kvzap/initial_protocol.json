@@ -1,0 +1,33 @@
+{
+  "status": "development; no quality or model-capacity claim",
+  "date": "2026-11-02",
+  "hardware": "Apple M1 Pro, 32 GiB unified memory",
+  "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+  "model_revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+  "predictor": "nvidia/KVzap-linear-Llama-3.1-8B-Instruct",
+  "predictor_revision": "92b20816c9d97412b1976ea15aa68b7b60510883",
+  "initial_threshold": -7.0,
+  "protected_recent_tokens": 128,
+  "initial_pruning": "Once, before evaluating the final prompt token. No pruning of generated tokens.",
+  "baselines": ["full precision KV", "existing 8-bit KV, fused prefill"],
+  "initial_performance_screen": {
+    "prompt_tokens": [4096, 16384, 32768],
+    "generated_tokens": 128,
+    "prefill_chunk_size": 2048,
+    "record": ["TTFT including pruning", "decode tokens/s", "resident KV bytes", "MLX peak and active bytes", "physical footprint", "system swap deltas", "head retention distribution"]
+  },
+  "promotion_targets": {
+    "resident_kv_reduction_vs_full": 0.5,
+    "resident_kv_reduction_vs_8bit": 0.2,
+    "decode_speedup_vs_8bit_at_long_context": 1.25,
+    "mean_quality_drop_percentage_points_max": 1.0,
+    "per_dataset_quality_drop_percentage_points_max": 3.0
+  },
+  "quality": {
+    "development": "Reuse previously evaluated examples; never relabel them held-out.",
+    "validation": "Freeze code and threshold, then select at least 48 new paired LongBench examples, excluding prior manifests; report paired uncertainty and individual regressions.",
+    "limitations": "Small-screen passing is not proof of non-inferiority or safety for arbitrary workloads. No tuning on validation results. Synthetic performance prompts do not establish task quality."
+  },
+  "capacity_claim": "Require a real reproducible workload that the strongest unmodified baseline cannot run acceptably on this machine; do not impose an artificial RAM limit or infer a model tier from KV savings.",
+  "online_prefill_pruning": "A separate variant from the published dense-prefill KVzap evaluation; requires its own quality validation before any claim."
+}

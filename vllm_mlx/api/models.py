@@ -213,6 +213,8 @@ class ChatCompletionRequest(BaseModel):
     specprefill_keep_pct: float | None = None
     # SpecPrefill: per-request evenly spaced backbone percentage.
     specprefill_backbone_pct: float | None = None
+    # Experimental one-shot prompt KV pruning; text-only SimpleEngine.
+    kvzap: bool = Field(default=False, strict=True)
     # Enable/disable thinking mode (None = server default, typically True)
     enable_thinking: bool | None = None
     # MLLM assistant-drafter per-request override (None = server default).
@@ -328,6 +330,8 @@ class CompletionRequest(BaseModel):
     specprefill_keep_pct: float | None = None
     # SpecPrefill: per-request evenly spaced backbone percentage.
     specprefill_backbone_pct: float | None = None
+    # Experimental one-shot prompt KV pruning; text-only SimpleEngine.
+    kvzap: bool = Field(default=False, strict=True)
     # MLLM assistant-drafter per-request override (None = server default).
     mllm_draft: bool | None = None
 

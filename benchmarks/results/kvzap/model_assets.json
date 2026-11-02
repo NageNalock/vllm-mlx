@@ -1,0 +1,104 @@
+[
+  {
+    "repo": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+    "revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+    "files": [
+      {
+        "name": ".gitattributes",
+        "bytes": 1519
+      },
+      {
+        "name": "README.md",
+        "bytes": 14433
+      },
+      {
+        "name": "config.json",
+        "bytes": 1017
+      },
+      {
+        "name": "model.safetensors",
+        "bytes": 4517488999
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "bytes": 52381
+      },
+      {
+        "name": "special_tokens_map.json",
+        "bytes": 296
+      },
+      {
+        "name": "tokenizer.json",
+        "bytes": 9084449
+      },
+      {
+        "name": "tokenizer_config.json",
+        "bytes": 55350
+      }
+    ],
+    "weights_sha256": "08eff50fa4eb1fe499ead69eaeb4c5177ae82f218da0b55e0e31d7a989debb92",
+    "verification": "Full download SHA-256 matched the official Hugging Face file metadata before use.",
+    "small_file_sha256": {
+      "tokenizer_config.json": "0514fcf4017bff6ac7bba1cd68247b841060f3d942c2d428d929d5a932477085",
+      "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+      "config.json": "e809729d4bc2d0fa9a920c91165dfbf79875821c1b357df2aaf51bff07df382e",
+      "tokenizer.json": "bbc1904d35169c542dffbe1f7589a5994ec7426d9e5b609d07bab876f32e97ab",
+      "model.safetensors.index.json": "9a76e05055778bb04cacb7aff616b378da0e57c87a181c932037a943efba5997"
+    }
+  },
+  {
+    "repo": "nvidia/KVzap-linear-Llama-3.1-8B-Instruct",
+    "revision": "92b20816c9d97412b1976ea15aa68b7b60510883",
+    "files": [
+      {
+        "name": ".gitattributes",
+        "bytes": 1519
+      },
+      {
+        "name": "README.md",
+        "bytes": 3131
+      },
+      {
+        "name": "bias.md",
+        "bytes": 531
+      },
+      {
+        "name": "config.json",
+        "bytes": 210
+      },
+      {
+        "name": "explainability.md",
+        "bytes": 2720
+      },
+      {
+        "name": "model.safetensors",
+        "bytes": 4200520
+      },
+      {
+        "name": "overview.md",
+        "bytes": 6438
+      },
+      {
+        "name": "pred.npy",
+        "bytes": 23040128
+      },
+      {
+        "name": "privacy.md",
+        "bytes": 1355
+      },
+      {
+        "name": "safety.md",
+        "bytes": 685
+      },
+      {
+        "name": "true.npy",
+        "bytes": 23040128
+      }
+    ],
+    "weights_sha256": "6fe147472c1f31b7179dbf4b31d7f8950b0d824ecd8b92c5193c2dbbae80e898",
+    "verification": "Full download SHA-256 matched the official Hugging Face file metadata before use.",
+    "small_file_sha256": {
+      "config.json": "c2f157ec38df83348324898fb0d0c2cbd3b4659c9b189e7f3f11c1a12cae823b"
+    }
+  }
+]

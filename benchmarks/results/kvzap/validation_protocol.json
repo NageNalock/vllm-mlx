@@ -1,0 +1,37 @@
+{
+  "frozen_at_utc": "2026-11-02T12:21:13.669712+00:00",
+  "freeze_note": "Written during benchmark model loading/warmup after correcting a manifest field-name assertion; no quality results had been inspected and no candidate code was changed.",
+  "variant": "One-shot physical per-head KVzap pruning after the entire dense 8-bit prefill; retained entries promoted to FP16 for fused decode. All generated tokens retained.",
+  "threshold": -7.0,
+  "protected_recent_tokens": 128,
+  "prefill_step_size": 2048,
+  "selection_seed": 20261102,
+  "validation_cases": 48,
+  "validation_modes": [
+    "full",
+    "kvzap"
+  ],
+  "quality_gates": {
+    "maximum_overall_mean_loss_pp": 1.0,
+    "maximum_per_dataset_mean_loss_pp": 3.0
+  },
+  "reporting": "Report every paired case, all regressions, and paired bootstrap 95% intervals. Point-estimate gates do not prove non-inferiority. No tuning on this validation set.",
+  "performance_gates_vs_fused_8bit_at_32k": {
+    "minimum_decode_speedup": 1.25,
+    "minimum_resident_kv_reduction": 0.2
+  },
+  "end_to_end": "Measure separately and report all prompt and output lengths. No claim that decode speedup equals whole-request speedup.",
+  "capacity": "No larger-model claim without a real reproducible workload that a strong unmodified baseline cannot run acceptably.",
+  "rejected_online_variant": "Quantized online pruning with a protected 2048-token window failed the development quality gate (LCC -27.39 pp); excluded from the candidate.",
+  "source_sha256": {
+    "vllm_mlx/kvzap.py": "6faf4680d7765a50ffbd694695d75cbe0401a1518331872a2bc3d63c4e8921de",
+    "vllm_mlx/models/llm.py": "ffb56c73be1d771cf7bec09ad4b146b68d6a6a6e6a2e50a96645d489dfb91a3c",
+    "vllm_mlx/engine/simple.py": "182aaf671f43771e1ff037ff34bb7867f739ac59a1dfbbc63ca050a0ad21f3ad",
+    "vllm_mlx/api/models.py": "9ca2894b7de2f18f7eef9363a9ce267ea0d8cefa7c9d221dddf7aeb57ed2383b",
+    "vllm_mlx/server.py": "a616471d0a7c28f27c72772fc815b9e025b304bd8a7368d51bc75b3648a0a0d8",
+    "benchmarks/bench_kvzap.py": "9a6ecb6ba0c74133b309a3ccf3d7dd2cc584c0c9853ff89ca009c8340b3d53cf",
+    "benchmarks/kvzap_quality.py": "0c40b843a5826cf5f04090ee098dae06126cc814c126d674050c115e68c10e55",
+    "benchmarks/kvzap_memory.py": "e47122ef3f952eab90e57a92ade39d9d9ed197abbe6b42cb71e65fea46ad6c20",
+    "benchmarks/results/kvzap/validation_manifest.json": "f86df6093e3763e5149253f1d69c9e71ff49d119ef2cb54924413df76b58d1af"
+  }
+}
