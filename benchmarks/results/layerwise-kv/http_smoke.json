@@ -1,0 +1,90 @@
+{
+  "started_at_utc": "2026-11-02T17:12:02.867138+00:00",
+  "completed_at_utc": "2026-11-02T17:12:29.517681+00:00",
+  "candidate_source_commit": "8f0b640",
+  "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+  "model_revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+  "launch": "python -m vllm_mlx.cli serve <pinned-model-snapshot> --served-model-name kv-cache-review-smoke --host 127.0.0.1 --port <ephemeral-port> --offline",
+  "scope": "Actual checkpoint and localhost HTTP, separate from timed measurements; prefix cache left at its default setting.",
+  "passed": true,
+  "checks": [
+    {
+      "check": "models",
+      "status": 200,
+      "models": [
+        "kv-cache-review-smoke"
+      ]
+    },
+    {
+      "check": "chat/completions",
+      "stream": false,
+      "status": 200,
+      "prompt_sha256": "a03752beade783a874e4b94d0bd878032f2fa4a193edc6c9d98b36956757a740",
+      "elapsed_s": 4.248860125022475,
+      "text": "The audit record value is aster-731.",
+      "usage": {
+        "prompt_tokens": 1011,
+        "completion_tokens": 10,
+        "total_tokens": 1021
+      },
+      "finish_reason": "stop"
+    },
+    {
+      "check": "chat/completions",
+      "stream": true,
+      "status": 200,
+      "prompt_sha256": "a03752beade783a874e4b94d0bd878032f2fa4a193edc6c9d98b36956757a740",
+      "elapsed_s": 4.275421167025343,
+      "text": "The audit record value is aster-731.",
+      "chunks": 12,
+      "received_done": true
+    },
+    {
+      "check": "chat/completions validation",
+      "string_flag_status": 422,
+      "incompatible_mode_status": 400,
+      "rejected_before_sse": true
+    },
+    {
+      "check": "completions",
+      "stream": false,
+      "status": 200,
+      "prompt_sha256": "a03752beade783a874e4b94d0bd878032f2fa4a193edc6c9d98b36956757a740",
+      "elapsed_s": 4.526027957967017,
+      "text": "def helper_80(x): return x + 80\ndef helper_81(x): return x + 81",
+      "usage": {
+        "prompt_tokens": 976,
+        "completion_tokens": 24,
+        "total_tokens": 1000
+      },
+      "finish_reason": "length"
+    },
+    {
+      "check": "completions",
+      "stream": true,
+      "status": 200,
+      "prompt_sha256": "a03752beade783a874e4b94d0bd878032f2fa4a193edc6c9d98b36956757a740",
+      "elapsed_s": 4.536360333033372,
+      "text": "def helper_80(x): return x + 80\ndef helper_81(x): return x + 81\n",
+      "chunks": 24,
+      "received_done": true
+    },
+    {
+      "check": "completions validation",
+      "string_flag_status": 422,
+      "incompatible_mode_status": 400,
+      "rejected_before_sse": true
+    },
+    {
+      "check": "disconnect then ordinary request",
+      "status": 200,
+      "ordinary_output_unchanged": true,
+      "ordinary_text": "13",
+      "recovery_statuses": [
+        503,
+        200
+      ],
+      "recovery_elapsed_s": 0.7057478330098093
+    }
+  ]
+}

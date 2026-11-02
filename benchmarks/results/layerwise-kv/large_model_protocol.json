@@ -1,0 +1,22 @@
+{
+  "frozen_at_utc": "2026-11-02T17:03:36.157016+00:00",
+  "hardware": "M1 Pro, 32 GiB unified memory",
+  "model": "mlx-community/Qwen3-32B-4bit",
+  "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+  "prompt_tokens": 32768,
+  "generation_tokens": 128,
+  "task": "Four-fact retrieval in code context, same prompt and greedy fixed-length output for every mode. Thinking disabled. This is a small synthetic capacity check, not general code-analysis quality evidence.",
+  "modes": [
+    "4-bit layerwise dense prefill",
+    "4-bit early quantization, quantized_kv_start=5000 (MLX-LM CLI default), with fused large prefill",
+    "4-bit deferred quantization after full dense prefill"
+  ],
+  "source_sha256": {
+    "vllm_mlx/quantized_prefill.py": "9be20ab7a67b773ae5405f2fec34b044b37348f476d2e6a7ea05d6d81479a605",
+    "benchmarks/bench_quantized_prefill.py": "036775260698494d1c956d7a17206c50b878ba690519bf24688a989181f76353",
+    "benchmarks/cache_quality.py": "0c40b843a5826cf5f04090ee098dae06126cc814c126d674050c115e68c10e55",
+    "benchmarks/cache_memory.py": "e47122ef3f952eab90e57a92ade39d9d9ed197abbe6b42cb71e65fea46ad6c20"
+  },
+  "safety_stop": "Stop only the benchmark process group if system memory pressure remains critical (level4) for10seconds, or a run exceeds20minutes. Do not change RAM/wired limits, clear swap, or close unrelated apps. Start only at normal pressure. Record stops as censored, not OOM or proof of impossibility.",
+  "reporting": "Compare peak physical footprint, active MLX allocation, TTFT, decode rate, swap deltas, exact output hashes, and four-fact recovery. Include the early-quantization baseline; if it already runs this model/workload, do not claim this PR uniquely enables the larger model."
+}

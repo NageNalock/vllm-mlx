@@ -133,6 +133,11 @@ response = client.completions.create(
 )
 ```
 
+For fresh long text requests on dense Llama or Qwen3, both endpoints accept
+`extra_body={"kv_cache_bits": 4}` (or `8`) to lower the peak memory of dense
+prefill through layerwise KV quantization. This opt-in SimpleEngine path bypasses
+prefix reuse. See [measurements and restrictions](../benchmarks/quantized-prefill.md).
+
 ### Models
 
 ```bash

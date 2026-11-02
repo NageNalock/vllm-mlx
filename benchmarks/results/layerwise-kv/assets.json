@@ -1,0 +1,101 @@
+{
+  "hardware": "Apple M1 Pro (10 CPU cores), 32 GiB unified memory",
+  "runtime": {
+    "macos": "26.6.2",
+    "python": "3.12.15",
+    "mlx": "0.32.4",
+    "mlx_lm": "0.31.3",
+    "transformers": "5.22.1"
+  },
+  "models": [
+    {
+      "repo": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+      "revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+      "files": [
+        {
+          "name": ".gitattributes",
+          "bytes": 1519
+        },
+        {
+          "name": "README.md",
+          "bytes": 14433
+        },
+        {
+          "name": "config.json",
+          "bytes": 1017
+        },
+        {
+          "name": "model.safetensors",
+          "bytes": 4517488999
+        },
+        {
+          "name": "model.safetensors.index.json",
+          "bytes": 52381
+        },
+        {
+          "name": "special_tokens_map.json",
+          "bytes": 296
+        },
+        {
+          "name": "tokenizer.json",
+          "bytes": 9084449
+        },
+        {
+          "name": "tokenizer_config.json",
+          "bytes": 55350
+        }
+      ],
+      "weights_sha256": "08eff50fa4eb1fe499ead69eaeb4c5177ae82f218da0b55e0e31d7a989debb92",
+      "verification": "Full download SHA-256 matched the official Hugging Face file metadata before use.",
+      "small_file_sha256": {
+        "tokenizer_config.json": "0514fcf4017bff6ac7bba1cd68247b841060f3d942c2d428d929d5a932477085",
+        "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+        "config.json": "e809729d4bc2d0fa9a920c91165dfbf79875821c1b357df2aaf51bff07df382e",
+        "tokenizer.json": "bbc1904d35169c542dffbe1f7589a5994ec7426d9e5b609d07bab876f32e97ab",
+        "model.safetensors.index.json": "9a76e05055778bb04cacb7aff616b378da0e57c87a181c932037a943efba5997"
+      }
+    },
+    {
+      "repo": "mlx-community/Qwen3-32B-4bit",
+      "revision": "bcaaf7f538adf166c1080a2befdb4f6019f66639",
+      "weights": [
+        {
+          "name": "model-00001-of-00004.safetensors",
+          "bytes": 5366619059,
+          "cache_blob_id": "c37d8ac8663e5bcfb7334889dcba56e3c6b3d7a9b8643a62c5f8b6105765aee1"
+        },
+        {
+          "name": "model-00002-of-00004.safetensors",
+          "bytes": 5346575850,
+          "cache_blob_id": "2f8fbccad32a2a2f3072ffb8d6adea2790cc0bd84927cc0c44fbaf1d97912867"
+        },
+        {
+          "name": "model-00003-of-00004.safetensors",
+          "bytes": 5359025653,
+          "cache_blob_id": "4412f7fa42e1419455698d3fe2b3c9557badd36a8a5c3a8d3d2439fc2fa6f0de"
+        },
+        {
+          "name": "model-00004-of-00004.safetensors",
+          "bytes": 2357630312,
+          "cache_blob_id": "5cdadd1a77ec47b3ea7799255efb7d15431765874963f55a33f71f43386eb619"
+        }
+      ],
+      "small_file_sha256": {
+        "config.json": "61164e05c52435ed08ee11d4ead8833577f7d329d05797fde522f457b80c25dd",
+        "tokenizer_config.json": "253153d0738ceb4c668d2eff957714dd2bea0b56de772a9fdccd96cbf517e6a0",
+        "model.safetensors.index.json": "dbe52fe0c696b83058e0ba1458d202105135ae33c602464bde2b406323498fd3"
+      },
+      "weight_hash_note": "Cache blob identifiers are recorded; the 17 GiB weights were not re-hashed while GPU timing runs were active.",
+      "safetensors_header_dtypes": {
+        "model.norm.weight": "BF16",
+        "model.layers.0.input_layernorm.weight": "BF16",
+        "model.layers.0.self_attn.q_proj.scales": "BF16"
+      }
+    }
+  ],
+  "dataset": {
+    "repo": "zai-org/LongBench",
+    "revision": "5e628be450b7e67fb7ae6e201bd6d8f7056f7672",
+    "file": "data.zip"
+  }
+}

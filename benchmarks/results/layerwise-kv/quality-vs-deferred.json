@@ -1,0 +1,63 @@
+{
+  "input": [
+    "full-validation.jsonl",
+    "early0-validation.jsonl",
+    "deferred-validation.jsonl",
+    "layerwise-validation.jsonl"
+  ],
+  "baseline": "quant4_deferred",
+  "candidate": "quant4_layerwise",
+  "overall": {
+    "n": 48,
+    "baseline": 49.02601746125854,
+    "candidate": 49.02601746125854,
+    "delta_pp": 0.0,
+    "paired_bootstrap_95_ci_pp": [
+      0.0,
+      0.0
+    ],
+    "identical_outputs": 48,
+    "identical_first_logprobs": 48
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 16,
+      "baseline": 56.43914473684211,
+      "candidate": 56.43914473684211,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 16,
+      "identical_first_logprobs": 16
+    },
+    "lcc": {
+      "n": 16,
+      "baseline": 37.94816089368677,
+      "candidate": 37.94816089368677,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 16,
+      "identical_first_logprobs": 16
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 52.690746753246756,
+      "candidate": 52.690746753246756,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 16,
+      "identical_first_logprobs": 16
+    }
+  },
+  "regressions": [],
+  "improvements": [],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}

@@ -1,0 +1,495 @@
+{
+  "dataset_revision": "5e628be450b7e67fb7ae6e201bd6d8f7056f7672",
+  "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+  "model_revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+  "selection_seed": 20261103,
+  "token_length_bands": {
+    "qasper": [
+      [
+        2048,
+        4096,
+        6
+      ],
+      [
+        4096,
+        8192,
+        6
+      ],
+      [
+        8192,
+        16384,
+        4
+      ]
+    ],
+    "hotpotqa": [
+      [
+        8192,
+        16384,
+        16
+      ]
+    ],
+    "lcc": [
+      [
+        2048,
+        4096,
+        6
+      ],
+      [
+        4096,
+        8192,
+        6
+      ],
+      [
+        8192,
+        16384,
+        4
+      ]
+    ]
+  },
+  "excluded_ids": [
+    "hotpotqa-0",
+    "hotpotqa-103",
+    "hotpotqa-106",
+    "hotpotqa-114",
+    "hotpotqa-118",
+    "hotpotqa-120",
+    "hotpotqa-121",
+    "hotpotqa-135",
+    "hotpotqa-136",
+    "hotpotqa-144",
+    "hotpotqa-148",
+    "hotpotqa-155",
+    "hotpotqa-158",
+    "hotpotqa-159",
+    "hotpotqa-16",
+    "hotpotqa-160",
+    "hotpotqa-163",
+    "hotpotqa-167",
+    "hotpotqa-174",
+    "hotpotqa-175",
+    "hotpotqa-177",
+    "hotpotqa-184",
+    "hotpotqa-191",
+    "hotpotqa-193",
+    "hotpotqa-195",
+    "hotpotqa-197",
+    "hotpotqa-2",
+    "hotpotqa-20",
+    "hotpotqa-22",
+    "hotpotqa-3",
+    "hotpotqa-37",
+    "hotpotqa-4",
+    "hotpotqa-41",
+    "hotpotqa-43",
+    "hotpotqa-46",
+    "hotpotqa-49",
+    "hotpotqa-50",
+    "hotpotqa-53",
+    "hotpotqa-57",
+    "hotpotqa-6",
+    "hotpotqa-7",
+    "hotpotqa-72",
+    "hotpotqa-75",
+    "hotpotqa-76",
+    "hotpotqa-78",
+    "hotpotqa-85",
+    "hotpotqa-97",
+    "hotpotqa-98",
+    "lcc-106",
+    "lcc-111",
+    "lcc-114",
+    "lcc-121",
+    "lcc-132",
+    "lcc-138",
+    "lcc-159",
+    "lcc-172",
+    "lcc-198",
+    "lcc-200",
+    "lcc-235",
+    "lcc-242",
+    "lcc-254",
+    "lcc-263",
+    "lcc-278",
+    "lcc-280",
+    "lcc-281",
+    "lcc-292",
+    "lcc-298",
+    "lcc-306",
+    "lcc-310",
+    "lcc-311",
+    "lcc-32",
+    "lcc-349",
+    "lcc-354",
+    "lcc-358",
+    "lcc-372",
+    "lcc-374",
+    "lcc-381",
+    "lcc-388",
+    "lcc-396",
+    "lcc-405",
+    "lcc-412",
+    "lcc-438",
+    "lcc-455",
+    "lcc-46",
+    "lcc-462",
+    "lcc-465",
+    "lcc-467",
+    "lcc-471",
+    "lcc-475",
+    "lcc-491",
+    "lcc-492",
+    "lcc-495",
+    "lcc-7",
+    "lcc-80",
+    "lcc-81",
+    "lcc-86",
+    "qasper-0",
+    "qasper-1",
+    "qasper-10",
+    "qasper-102",
+    "qasper-106",
+    "qasper-108",
+    "qasper-11",
+    "qasper-112",
+    "qasper-116",
+    "qasper-117",
+    "qasper-120",
+    "qasper-121",
+    "qasper-123",
+    "qasper-124",
+    "qasper-125",
+    "qasper-130",
+    "qasper-131",
+    "qasper-135",
+    "qasper-14",
+    "qasper-142",
+    "qasper-145",
+    "qasper-149",
+    "qasper-152",
+    "qasper-158",
+    "qasper-16",
+    "qasper-161",
+    "qasper-165",
+    "qasper-173",
+    "qasper-176",
+    "qasper-181",
+    "qasper-182",
+    "qasper-184",
+    "qasper-191",
+    "qasper-197",
+    "qasper-199",
+    "qasper-2",
+    "qasper-24",
+    "qasper-29",
+    "qasper-3",
+    "qasper-32",
+    "qasper-4",
+    "qasper-41",
+    "qasper-5",
+    "qasper-50",
+    "qasper-52",
+    "qasper-59",
+    "qasper-6",
+    "qasper-64",
+    "qasper-65",
+    "qasper-68",
+    "qasper-7",
+    "qasper-72",
+    "qasper-94",
+    "qasper-95",
+    "qasper-97",
+    "qasper-98"
+  ],
+  "exclude_contexts_of_prior_examples": true,
+  "samples": [
+    {
+      "id": "qasper-159",
+      "source_id": "1fc62062641bf85a160d7465aefb91870235e6c815b392cf",
+      "tokens": 2715,
+      "prompt_sha256": "8e6b450086be7fd62677f3ff3bfb5593eac756d2c96cb5161ffa2a40dd8dbd6b"
+    },
+    {
+      "id": "qasper-104",
+      "source_id": "d17f6335089f3dd922f3d5400e3fc2ad1ca15202f4ac6467",
+      "tokens": 2394,
+      "prompt_sha256": "6358a1a798a406355ddb1217124c99cfb57368494e1674e422ebcaf9f7e3f212"
+    },
+    {
+      "id": "qasper-78",
+      "source_id": "6eec5b0ef38f64f6a545677f730b4ea1c980db6d380de966",
+      "tokens": 2178,
+      "prompt_sha256": "93c55522bf036427c6d7758929a0bfa9a69640d2397a6d1518b8779e91f85a9f"
+    },
+    {
+      "id": "qasper-193",
+      "source_id": "d999910bed46747299b4c315cc345dc978d979252f65d39e",
+      "tokens": 4021,
+      "prompt_sha256": "3cd00356feeb94bff1ad0f66c27ccf1e64210867f7da4f1af1ab90ca2c7680c4"
+    },
+    {
+      "id": "qasper-122",
+      "source_id": "b69e327bf637183397c7d975df8e1c45fa1ad9866b71e6d1",
+      "tokens": 3551,
+      "prompt_sha256": "b6086cdaaa6a8587a598c4b8d717e993e67e20172cd88625959c42eff54385d9"
+    },
+    {
+      "id": "qasper-82",
+      "source_id": "06baf6c4ae0f97a3131aa06bfa2b4878bd99ef96659cbf9c",
+      "tokens": 3299,
+      "prompt_sha256": "af437774bb7f033891bad7f3cc4d1e234cbd5656e07677cf2e9d71b59711dfaf"
+    },
+    {
+      "id": "qasper-144",
+      "source_id": "9c060535b14310dff1d863489d6ecd52f7ecffda0dcc9fcb",
+      "tokens": 4224,
+      "prompt_sha256": "b1a1c18a2009087b223d17cb72a5ce274b8bad158b680de0f85f2a13615bd258"
+    },
+    {
+      "id": "qasper-43",
+      "source_id": "b5f62b7acf975c5454df077adf727c1bcc62985be5e5a660",
+      "tokens": 4155,
+      "prompt_sha256": "435687fef1ed59db97b2527a61cf9337693e51bc86889abe14888887e3713e1f"
+    },
+    {
+      "id": "qasper-51",
+      "source_id": "e0a92574e7c31adb9146851dcc95729b585305d15cf491d4",
+      "tokens": 5816,
+      "prompt_sha256": "abeae74322dadf29a5ff5d23a67038d5b153e1f5decf1fa03bca20a25d804a8f"
+    },
+    {
+      "id": "qasper-141",
+      "source_id": "a8f155f6d0b86040e21fdb913b07c5fa675b82dbacc0674e",
+      "tokens": 5187,
+      "prompt_sha256": "0c1b56adab4b39e10e373215271dc064e1ce63e9f907e3ad0dae7ae0f6a77dea"
+    },
+    {
+      "id": "qasper-22",
+      "source_id": "04af9dc96013a1bc7faecbc589f7ea5c207e92c7d9a3495e",
+      "tokens": 5070,
+      "prompt_sha256": "15c64a838080514402dbf095d58929a75432ff82ba5fb46da44006d418045728"
+    },
+    {
+      "id": "qasper-70",
+      "source_id": "db4afd55783aaf6d069c5228152492cf0804e9cf310cb238",
+      "tokens": 5418,
+      "prompt_sha256": "3786b49a7983d5c4a08b00ca15a834282b33c2935fcc11a63f402cee62b220e0"
+    },
+    {
+      "id": "qasper-13",
+      "source_id": "d022dfe02fb2a55b4baa40fe436f616aecd3f3ced1a58d7c",
+      "tokens": 8584,
+      "prompt_sha256": "cb3254a3b413b4cc610315a9e17297cb29b7430e52e7577549917299ae8beda8"
+    },
+    {
+      "id": "qasper-27",
+      "source_id": "3ca65b23b3cb316653709b469b4a9b42b790e0350c76ae1a",
+      "tokens": 9150,
+      "prompt_sha256": "7612607f3b36f3bc00b8b5d9bc03abec688282f42c4837d79b67a1464c28a5e6"
+    },
+    {
+      "id": "qasper-67",
+      "source_id": "89a4fd3fce6114c3401790c6f9b5243fda094597657f348a",
+      "tokens": 9917,
+      "prompt_sha256": "888c3c49164c254a3278069f7602e9d659bd2bedd7140aef4bd38d77d0233902"
+    },
+    {
+      "id": "qasper-118",
+      "source_id": "a65a814bec0bd2085660d75fc5eeb39935a7cea44abab2b1",
+      "tokens": 9148,
+      "prompt_sha256": "c21fb7eadbb6fbdbb8e44d31e3c3e4d460e6476919c7545df1dd040bc44fc19b"
+    },
+    {
+      "id": "hotpotqa-176",
+      "source_id": "861e7d3ba836f6a816d0265dc1c9f5566ef4d22b8de223ca",
+      "tokens": 16310,
+      "prompt_sha256": "aeec26628d8c152927c841636d8f639aa87f34e793649689bc38f364de8d7dab"
+    },
+    {
+      "id": "hotpotqa-189",
+      "source_id": "27190bb50ab7e97f74e2feec7dc3ef037f1a1c74d335ecb1",
+      "tokens": 15475,
+      "prompt_sha256": "9d474c42b14c05509a9ef48a1c2156d8a51e93f20c78b53af95c5ba4346c380d"
+    },
+    {
+      "id": "hotpotqa-19",
+      "source_id": "5e3362de0244d2b96c83958c4d3229151999292c369b0197",
+      "tokens": 15450,
+      "prompt_sha256": "778429a3c774651990b635132349e6eee9e99f3b953c0128ead5846fafa7ebe7"
+    },
+    {
+      "id": "hotpotqa-152",
+      "source_id": "83df22880fee9f761464404ca2ff6ab21954e6b0827b4142",
+      "tokens": 16180,
+      "prompt_sha256": "e4aa1b09a6690624b1d5300b38761c747b78b0cf411f3c2536726f05b3d57e07"
+    },
+    {
+      "id": "hotpotqa-153",
+      "source_id": "3518c800877d0b8cc48ca575de745502b472a139564ffa46",
+      "tokens": 12302,
+      "prompt_sha256": "4d5b20d999cec859e3637059d368f8cbd5079d0cfc61ec9034f9828c019a9bb1"
+    },
+    {
+      "id": "hotpotqa-26",
+      "source_id": "1ceb1c91662d241b3421853112a91b5868d1b81fe3b88ce4",
+      "tokens": 16301,
+      "prompt_sha256": "ab300e1c1d192f200c419e0ede79002853ab9ff53f9b88646de6a474be79be6a"
+    },
+    {
+      "id": "hotpotqa-92",
+      "source_id": "4aee23759e842807b156492356b920a11236c7ea3da20732",
+      "tokens": 16317,
+      "prompt_sha256": "63a67b70afa3d371e0ed4dd6a83a06c6bef94a0ce59e46e1d37c0e9f8fb6e230"
+    },
+    {
+      "id": "hotpotqa-47",
+      "source_id": "963e90eba94bba5bf5cf56755032d7bd4a3e4e225d3b8d14",
+      "tokens": 10002,
+      "prompt_sha256": "6ccc258c22738ecdb3873bbeb75c821fd32a052632355100d01adeb1ed68a878"
+    },
+    {
+      "id": "hotpotqa-151",
+      "source_id": "3f17f12cfde4c677f3af81362ce1df42f949bee1ceae40f4",
+      "tokens": 16143,
+      "prompt_sha256": "1dbe4c7ea7df3877b8fb4f9aa6b4bdb773486ad3d374c5f3b563d21e0488030c"
+    },
+    {
+      "id": "hotpotqa-38",
+      "source_id": "72a769d6d0fd1c5c90974e60ab97e88e6853b9115a7fb85e",
+      "tokens": 16029,
+      "prompt_sha256": "91c094abcb718f905369f8d113bf45ab0da27fbd9ae3f56a62ffb6358b9be586"
+    },
+    {
+      "id": "hotpotqa-179",
+      "source_id": "de202b6e76dc82831c7f14a6d4346d84b0c0e5e3783356cf",
+      "tokens": 16220,
+      "prompt_sha256": "c2f51b3d83f2972ccdaf0e04dc49c2d36d5a9d49893f18a6ab067495f5f7dc90"
+    },
+    {
+      "id": "hotpotqa-65",
+      "source_id": "f1c0b9a9ec47ccda8ba4b1be0ca7083b961ba0f06b2a4df7",
+      "tokens": 14979,
+      "prompt_sha256": "bba35e84994133179f58d1bb0a4c837532a04d6be79d9ff8e58ada33188ba366"
+    },
+    {
+      "id": "hotpotqa-102",
+      "source_id": "60ec93a22fbcb65eeadd9f1d2b3c8e4ed44d3a2c4285b168",
+      "tokens": 11785,
+      "prompt_sha256": "81f0aac3206e0ea9645c172f1e1687137e8f204f611b63e2655bc3e92dd54a48"
+    },
+    {
+      "id": "hotpotqa-131",
+      "source_id": "887be3f3f2080532b3c0f1dc4d26be4f8a06030bf2e68a1a",
+      "tokens": 11631,
+      "prompt_sha256": "9e52df4c83848c21806dc0f5444402b93fa3de277ee433f6cf3b9db31a10c832"
+    },
+    {
+      "id": "hotpotqa-48",
+      "source_id": "99635fd2d7a227cb3360253cf0f5759ed87bbac33593d830",
+      "tokens": 9996,
+      "prompt_sha256": "d645daeaa650793270b9dc973888f8bd9480676b3aacbc0ac6580681ad02cbc9"
+    },
+    {
+      "id": "hotpotqa-8",
+      "source_id": "f039fe9cc81a0a312f9899beca2fe26b710bf8c3aa23a4d9",
+      "tokens": 12151,
+      "prompt_sha256": "782b690a6463da6833cd865537d839ff8d11989571e586e0c2d2249463bb7bb0"
+    },
+    {
+      "id": "lcc-76",
+      "source_id": "ce9e73e7e622c7688ef392b99d6afaa87bea6b138e34fa82",
+      "tokens": 3791,
+      "prompt_sha256": "e089ead609f7765701a52a537e41b5e7732741ad056578447183fd93cc461e48"
+    },
+    {
+      "id": "lcc-14",
+      "source_id": "e6dca363f4644795057dce35d57cdbc53e1e84bea1699bbf",
+      "tokens": 2083,
+      "prompt_sha256": "3fef5cb235dedc1861306765f44deedfea38152f0a533572ff3a2bffd52a0fac"
+    },
+    {
+      "id": "lcc-122",
+      "source_id": "6261fc22209c7ae19b5098f7004853c527e546aedd74f793",
+      "tokens": 2444,
+      "prompt_sha256": "a25a0cebcbe78d91e94c9f38ea52e8b1f2324f9fbc4268aa4a8e292b31b1e4b6"
+    },
+    {
+      "id": "lcc-189",
+      "source_id": "8ed6880ab3b5c6188940a9999bc369708c565891b8d871f2",
+      "tokens": 3361,
+      "prompt_sha256": "f2ac9c0081afe132f3bca303301f54d77cb575ed5ff120379f8102d38a54bb5d"
+    },
+    {
+      "id": "lcc-282",
+      "source_id": "e65940b61936a514284b1b107717706bb95a8df5df726f13",
+      "tokens": 2048,
+      "prompt_sha256": "e8b53e113a6d86e0f52e1153c1ecdec5ffe95d2660a2c01e03b824a97bb8a5b6"
+    },
+    {
+      "id": "lcc-482",
+      "source_id": "3f302be0d966385442a6296e30fa6c4cf6c4bd891c7e8b20",
+      "tokens": 3151,
+      "prompt_sha256": "b437d1614a47e3e6b7b2867858e872cfb7047e12f9a187db8c9411b50c785cc1"
+    },
+    {
+      "id": "lcc-163",
+      "source_id": "6303ed98c58fa08f8639667add933df524657e812b3495b5",
+      "tokens": 6184,
+      "prompt_sha256": "5f590eee6dfee71846b981982feac660ae4cf11e922fa49d42ff9f148452357d"
+    },
+    {
+      "id": "lcc-125",
+      "source_id": "773a363f2c8a3fdcc084a85466fde2a1350769f67776f1f4",
+      "tokens": 6458,
+      "prompt_sha256": "06f03af5e7cfd89a9df5fab41cf50ad16f1b6ee4d0700df833875ea18090b7d2"
+    },
+    {
+      "id": "lcc-192",
+      "source_id": "7e20f7645ae46306c1c075059d48f64e2003534e7b1502c4",
+      "tokens": 6299,
+      "prompt_sha256": "5455d6f0b6cb11486b5935e2573e91aa5a176495c52f4ed3ee5fdd36167fdd36"
+    },
+    {
+      "id": "lcc-27",
+      "source_id": "9d639220f2ae9cbb3b86c56287371346450159efa5afc251",
+      "tokens": 5446,
+      "prompt_sha256": "17b1e170c04f5c068751774f5b96085a975922a0b1c394f0d18ead9818b0078a"
+    },
+    {
+      "id": "lcc-188",
+      "source_id": "5d7f05b8f84258ef580014f750f774d8eb4af59aa074f04a",
+      "tokens": 5208,
+      "prompt_sha256": "c108beaf3bd390e88dc2544d6635b970c5e38b99ffa33a318088b8a10badd64b"
+    },
+    {
+      "id": "lcc-162",
+      "source_id": "0d5ebe09775314436fb1f120cb4c0d408be485ca49b27ab0",
+      "tokens": 5684,
+      "prompt_sha256": "cdb6b77d7f53db4409a95cdcb9259ff18ca1ded618ef81cdcc423365d7af49f3"
+    },
+    {
+      "id": "lcc-333",
+      "source_id": "0cc866de4a40f62e0dc2031e25487c87a06027728f76c5a9",
+      "tokens": 13827,
+      "prompt_sha256": "2297e65f610db669f801a7a3bfeaa8f571ed9d6013f95f83f70f16c3738e319b"
+    },
+    {
+      "id": "lcc-443",
+      "source_id": "fbd2ce3fa32ecbd53cedd8e6e94c4011c99d452dc926cd2e",
+      "tokens": 9804,
+      "prompt_sha256": "5ef751525830f3dd21a800ce56cc98a5c158bf26a1eeb470f32fe9e28ff88ed0"
+    },
+    {
+      "id": "lcc-54",
+      "source_id": "d616bbc2ccc30cab16459d0300a1d8c933b33e1455e3aa84",
+      "tokens": 14176,
+      "prompt_sha256": "1f29579ae66f55cde3b165a3c1bdd9eb020874f1e3b10a1045dcbf508c3a1aab"
+    },
+    {
+      "id": "lcc-410",
+      "source_id": "c2347b59144779a0b7a159df894795eedab94a268ecd2b43",
+      "tokens": 8832,
+      "prompt_sha256": "a4fc98bb69159c1240a5ae27e483a09bbb15137eb4ef3086603ac9cf686cc9bd"
+    }
+  ],
+  "purpose": "Fresh validation after development; never tune on these outputs."
+}

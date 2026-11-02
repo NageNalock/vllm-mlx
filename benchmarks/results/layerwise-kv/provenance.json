@@ -1,0 +1,103 @@
+{
+  "native_source_commit": "8f0b640",
+  "reference_repository": "NageNalock/vllm-mlx",
+  "reference_driver": "benchmarks/bench_kvzap_deferred_quantization.py",
+  "explanation": "The deferred reference used an earlier shared benchmark driver. Candidate measurements import the native quantized_prefill.py implementation; the standalone bench_quantized_prefill.py reproduces its execution and is cross-checked at 32K. Earlier driver manifest paths refer to the research checkout. The manifest contents and all prompt hashes are preserved. The 48 cases are reused for exact implementation parity, not advertised as fresh held-out evidence after choosing this cache policy.",
+  "records": [
+    {
+      "source": "dense_validation_manifest.json",
+      "destination": "validation_manifest.json",
+      "sha256": "5541bc7b47bdc128ac636f493fd222a1f9d586021cec4d0eca48f969daab5cfe",
+      "transformation": "none"
+    },
+    {
+      "source": "validation_context_audit.json",
+      "destination": "validation_context_audit.json",
+      "sha256": "690dd5a0f47ca13de1a550c907b45cadc4d1bc80ba11f870df8c4faf9c2440d4",
+      "transformation": "none"
+    },
+    {
+      "source": "dense-32k-full.jsonl",
+      "destination": "llama-full-32k.jsonl",
+      "sha256": "d53f18453514c757480fbcbcb503d0ee6151aa6ca64749fff678b93392358e2d",
+      "transformation": "none"
+    },
+    {
+      "source": "dense-32k-quant4.jsonl",
+      "destination": "llama-early0-32k.jsonl",
+      "sha256": "afc6149c5c205a3cd44cefe2fb54c54fc1c19164095d2ad345bd3188db93b7b8",
+      "transformation": "none"
+    },
+    {
+      "source": "deferred-32k-quant4.jsonl",
+      "destination": "llama-deferred-32k.jsonl",
+      "sha256": "9a778988709382256ae3c46d7d79567e00a4d882d8f790e8d368d7b6cfb24961",
+      "transformation": "none"
+    },
+    {
+      "source": "deferred-validation.jsonl",
+      "destination": "deferred-validation.jsonl",
+      "sha256": "3de703eb8e8f785b7ddac1ccfdabe87abf159df2b427f882cf10a7dd0d46fb65",
+      "transformation": "none"
+    },
+    {
+      "source": "layerwise-quant4-validation.jsonl",
+      "destination": "layerwise-validation.jsonl",
+      "sha256": "d57e5ed2b1ecb399ded8b5d8554cceee72692e0eb84be58bb3cbac395a3e269d",
+      "transformation": "none"
+    },
+    {
+      "source": "layerwise-quant4-32k.jsonl",
+      "destination": "layerwise-initial-32k.jsonl",
+      "sha256": "112f49b97c4aaf182c781db073b13ef86c748558598f9609c94cea6ccd48e332",
+      "transformation": "none"
+    },
+    {
+      "source": "layerwise-quantization-parity.json",
+      "destination": "output_parity.json",
+      "sha256": "62b4d53617f786cfde4b2bacde0478a78ccd038641894a5c1ddb0111e3c40432",
+      "transformation": "none"
+    },
+    {
+      "source": "layerwise-validation.jsonl",
+      "source_sha256": "9944259c08f978b257b1e8998b6491a005050a9506a0939f248f07a21318754a",
+      "destination": "full-validation.jsonl",
+      "sha256": "058d4d3ec5ad8712873409d1c75c98aa0914b3ec789612ce031fedcdb8bf8266",
+      "transformation": "Extract all 48 quality records for mode=full; no examples excluded or scores changed."
+    },
+    {
+      "source": "layerwise-validation.jsonl",
+      "source_sha256": "9944259c08f978b257b1e8998b6491a005050a9506a0939f248f07a21318754a",
+      "destination": "early0-validation.jsonl",
+      "sha256": "14a96db3efbe0b18c30a810392b0734aa5315ee9e184697462ff649f78f2b18b",
+      "transformation": "Extract all 48 quality records for mode=quant4; no examples excluded or scores changed."
+    }
+  ],
+  "deferred_reference_driver_commit": "3014c20",
+  "time_records": [
+    {
+      "source": "dense-32k-full.stderr",
+      "source_sha256": "af8be00494308b9c884d5ed0add75c537408595eadd813f813a3014d8c09e07a",
+      "destination": "llama-full-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings."
+    },
+    {
+      "source": "dense-32k-quant4.stderr",
+      "source_sha256": "7aff2ae258cd2a89511636abfb3a18acd493e37b4c8d053fcb9e5a98ea5b5721",
+      "destination": "llama-early0-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings."
+    },
+    {
+      "source": "deferred-32k-quant4.stderr",
+      "source_sha256": "013808c533e6666a344ef7824d5c075ac7973622c0a9a127020a8f07851d6e60",
+      "destination": "llama-deferred-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings."
+    },
+    {
+      "source": "native-llama-32k.stderr",
+      "source_sha256": "b11bcd17b72350805f3cfef2eaf8acdcfdbcb61acc84d5daee89d12bf9b2f637",
+      "destination": "native-llama-32k.time.txt",
+      "transformation": "Extract the exact /usr/bin/time -l resource footer; omit preceding tokenizer warnings."
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "source_commit": "8f0b640",
+  "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+  "focused": {
+    "tests": 121,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "passed": 121
+  },
+  "full_suite": {
+    "tests": 3926,
+    "errors": 3,
+    "failures": 14,
+    "skipped": 28,
+    "passed": 3881
+  },
+  "base_full_suite": {
+    "tests": 3883,
+    "errors": 3,
+    "failures": 14,
+    "skipped": 28,
+    "passed": 3838
+  },
+  "full_failure_ids_match_base": true,
+  "failure_ids": [
+    "tests/test_engine_core_stream_safety.py::test_engine_core_no_cross_thread_stream_error",
+    "tests/test_engine_core_thread_streams.py::test_engine_core_runs_all_scheduler_steps_on_one_worker_thread",
+    "tests/test_lifecycle_cli.py::TestLifecycleCli::test_serve_command_describes_lazy_startup_without_claiming_model_is_loaded",
+    "tests/test_lifecycle_cli.py::TestLifecycleCli::test_serve_command_preserves_mtp_scheduler_config_with_residency",
+    "tests/test_mcp_security.py::TestMCPConfigDiscovery::test_load_mcp_config_allows_explicit_path_in_cwd",
+    "tests/test_mcp_security.py::TestMCPConfigDiscovery::test_load_mcp_config_uses_user_config_directory",
+    "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_encoded_path_traversal_in_config_rejected",
+    "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_node_eval_in_config_rejected",
+    "tests/test_mcp_security.py::TestMCPServerConfigSecurity::test_valid_stdio_config",
+    "tests/test_memory_cache.py::test_save_load_roundtrip_through_provenance_subdir",
+    "tests/test_prefix_cache_scheduler_parity.py::test_arrays_cache_next_turn_matches_cold_when_coverage_is_unknown",
+    "tests/test_prefix_cache_scheduler_parity.py::test_identical_plain_kv_prompt_never_replays_a_supersequence",
+    "tests/test_scheduler_exact_cache_replay.py::test_real_batch_processors_see_the_same_history_after_replay[exact]",
+    "tests/test_scheduler_exact_cache_replay.py::test_real_batch_processors_see_the_same_history_after_replay[partial]",
+    "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_optimized_detokenizer_correctness",
+    "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_scheduler_uses_optimized_detokenizer",
+    "tests/test_streaming_detokenizer.py::TestOptimizedDetokenizer::test_tokenizer_wrapper_has_optimized_detokenizer"
+  ],
+  "static_checks": {
+    "ruff": "passed on changed files",
+    "black": "passed on changed files",
+    "mypy_command": "python -m mypy vllm_mlx",
+    "mypy_base_errors": 722,
+    "mypy_candidate_errors": 722,
+    "mypy_added_errors": 0
+  },
+  "numerical_checks": "32 combinations of Llama/Qwen3, FP32/FP16, 4/8-bit caches and prompt lengths 1/17/19/33 compare every generated logprob vector, token, quantized cache array, offset and processor history with standard deferred quantization.",
+  "real_model_quality_parity": {
+    "examples": 48,
+    "exact_output_matches": 48,
+    "exact_first_logprob_matches": 48
+  },
+  "http_smoke": "http_smoke.json",
+  "cancellation_comparison": "cancellation_comparison.json",
+  "notes": [
+    "The first HTTP smoke assumed immediate admission after disconnect and saw a busy 503. A direct localhost comparison reproduces 503 then 200 in both untouched base and candidate, each recovering in about 0.71s. No production code was changed; the final smoke explicitly waits only on the known text_generation_busy response.",
+    "The original source has 14 full-suite failures and three setup errors in this offline environment; candidate failure IDs match exactly."
+  ]
+}

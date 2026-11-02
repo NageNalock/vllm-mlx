@@ -5,6 +5,7 @@ Performance benchmarks for vllm-mlx on Apple Silicon.
 ## Benchmark Types
 
 - [LLM Benchmarks](llm.md) - Text generation performance
+- [Layerwise KV Quantization](quantized-prefill.md) - Dense-prefill memory, output parity, and tradeoffs
 - [Image Benchmarks](image.md) - Image understanding performance
 - [Video Benchmarks](video.md) - Video understanding performance
 

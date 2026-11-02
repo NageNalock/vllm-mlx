@@ -1,0 +1,8 @@
+{
+  "completed_cases": 48,
+  "exact_output_matches": 48,
+  "exact_first_logprob_matches": 48,
+  "score_differences": 0,
+  "reference": "deferred-validation.jsonl",
+  "candidate": "layerwise-quant4-validation.jsonl"
+}

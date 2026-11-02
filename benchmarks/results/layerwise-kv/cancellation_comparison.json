@@ -1,0 +1,24 @@
+{
+  "transport": "localhost HTTP without environment proxies; close streaming connection after first content chunk",
+  "policy": "Default fail-fast admission; only retry the explicit text_generation_busy response while the old request drains",
+  "results": [
+    {
+      "implementation": "untouched_base",
+      "statuses": [
+        503,
+        200
+      ],
+      "recovery_elapsed_s": 0.7117672500316985,
+      "ordinary_output_unchanged": true
+    },
+    {
+      "implementation": "layerwise",
+      "statuses": [
+        503,
+        200
+      ],
+      "recovery_elapsed_s": 0.7114542089984752,
+      "ordinary_output_unchanged": true
+    }
+  ]
+}
