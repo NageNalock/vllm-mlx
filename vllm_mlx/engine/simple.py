@@ -1357,6 +1357,24 @@ class SimpleEngine(BaseEngine):
             async for output in tracked_stream:
                 yield output
 
+    def validate_quantized_prefill(self, specprefill: bool | None = None) -> None:
+        """Validate an opt-in Layerwise KV quantization request before entering a generation path."""
+        from ..quantized_prefill import validate_quantized_prefill_model
+
+        if (
+            self._is_mllm
+            or self._mtp
+            or self._max_kv_size > 0
+            or specprefill is True
+            or (self._draft_model is not None and specprefill is not False)
+        ):
+            raise ValueError(
+                "Layerwise KV quantization requires text-only SimpleEngine without speculative "
+                "decoding, SpecPrefill, or a rotating KV cache"
+            )
+        assert self._model is not None
+        validate_quantized_prefill_model(self._model.model)
+
     async def _stream_generate_impl(
         self,
         prompt: str,
@@ -1385,6 +1403,8 @@ class SimpleEngine(BaseEngine):
 
         # Per-request specprefill overrides (from extra_body)
         specprefill_override = kwargs.pop("specprefill", None)
+        if kwargs.get("kv_cache_bits"):
+            self.validate_quantized_prefill(specprefill_override)
         specprefill_keep_pct_override = kwargs.pop("specprefill_keep_pct", None)
         specprefill_backbone_pct_override = kwargs.pop("specprefill_backbone_pct", None)
         request_id = str(kwargs.pop("request_id", "") or f"simple-{id(prompt):x}")
@@ -1792,9 +1812,14 @@ class SimpleEngine(BaseEngine):
         if not self._loaded:
             await self.start()
 
+        if kwargs.get("kv_cache_bits"):
+            self.validate_quantized_prefill(kwargs.get("specprefill"))
+
         chat_template_kwargs = dict(kwargs.pop("chat_template_kwargs", {}) or {})
         mllm_draft_requested = bool(kwargs.pop("mllm_draft", self._default_mllm_draft))
         has_media = has_media_content(messages)
+        if kwargs.get("kv_cache_bits") and has_media:
+            raise ValueError("Layerwise KV quantization requires text-only requests")
 
         await self._ensure_text_model_for_request(
             mllm_draft_requested=mllm_draft_requested
@@ -2033,6 +2058,8 @@ class SimpleEngine(BaseEngine):
         # ``presence_penalty=0.0``, ``repetition_penalty=1.0``); compare against those
         # rather than ``key in kwargs`` so the common path still hits the cache.
         cache_blocking_controls: list[str] = []
+        if kwargs.get("kv_cache_bits"):
+            cache_blocking_controls.append("kv_cache_bits")
         if kwargs.get("stop"):
             cache_blocking_controls.append("stop")
         if kwargs.get("logits_processors"):
