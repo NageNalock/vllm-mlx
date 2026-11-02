@@ -86,6 +86,13 @@ _measure = bench.measure
 _generate_step = bench.generate_step
 
 
+def score_with_chunk_evaluation(self, hidden_states):
+    if hidden_states.shape[0] != 1:
+        raise ValueError("KVzap supports one request at a time")
+    if self._heads is None and self.offset < self.prompt_length:
+        self._scores.append(self.scorer(hidden_states).transpose(0, 2, 1))
+
+
 def measure(model, tokenizer, predictor, tokens, mode, args, max_tokens, stop_at_eos):
     original = bench.kvzap_prompt_cache
     bench.kvzap_prompt_cache = lambda model, _, predictor, threshold: layerwise_cache(
@@ -116,4 +123,5 @@ if __name__ == "__main__":
     )
     bench.measure = measure
     bench.generate_step = generate_step
+    KVzapCache.score = score_with_chunk_evaluation
     bench.main()
