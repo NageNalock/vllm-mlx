@@ -20,14 +20,24 @@ is [KVzap on Apple Silicon](../../../docs/benchmarks/kvzap.md).
 - `layerwise-quality.json`, `quant4-quality.json`, and
   `layerwise-vs-quant4-quality.json`: paired summaries, confidence intervals, and
   every individual score regression or improvement.
-- `long-32k-*.jsonl`: fixed 1024-token generation measurements, run only if the
-  complete fresh quality screen passes. These may therefore be absent.
+- KVzap's conditional 1024-token measurement was not run because the complete
+  fresh quality screen failed. The additional deferred baseline below is separate.
 - `deferred_quantization_protocol.json`: an additional baseline using MLX-LM's
   existing `quantized_kv_start=prompt length` option. It keeps dense full-precision
   prefill before quantizing the cache to 4 bits. The candidate and primary quality
   gates stay unchanged; this comparison separates prefill precision from the
   decode-time cache policy.
+- `deferred-validation.jsonl`, `deferred-quality.json`, and
+  `layerwise-vs-deferred-quality.json`: the completed 48-case additional baseline
+  and its paired comparisons. `deferred_quantization_status.json` records
+  completion. These results do not override the failed primary quality gate.
+- `deferred-32k-quant4.jsonl`, `long-32k-quant4-deferred.jsonl`: isolated deferred
+  baseline measurements with 128 and 1024 fixed output tokens, respectively.
 - `verification.json`: numerical, lifecycle, API, full-suite, and static checks.
+
+The separate native quantization implementation is in
+[fork PR #3](https://github.com/NageNalock/vllm-mlx/pull/3). This branch preserves
+the rejected pruning experiment and its unchanged quality gate.
 
 `dense-32k-full.jsonl` and `dense-32k-quant4.jsonl` are isolated baselines. The
 4-bit and 8-bit baselines include fused prefill. All performance prompts are

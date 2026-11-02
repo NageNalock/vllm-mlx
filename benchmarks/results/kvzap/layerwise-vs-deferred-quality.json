@@ -1,0 +1,175 @@
+{
+  "input": [
+    "benchmarks/results/kvzap/layerwise-validation.jsonl",
+    "benchmarks/results/kvzap/deferred-validation.jsonl"
+  ],
+  "baseline": "quant4_deferred",
+  "candidate": "kvzap",
+  "overall": {
+    "n": 48,
+    "baseline": 49.02601746125854,
+    "candidate": 47.88677305509597,
+    "delta_pp": -1.1392444061625666,
+    "paired_bootstrap_95_ci_pp": [
+      -2.8249230508527305,
+      0.18947207529513155
+    ],
+    "identical_outputs": 35,
+    "identical_first_logprobs": 48
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 16,
+      "baseline": 56.43914473684211,
+      "candidate": 56.43914473684211,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 15,
+      "identical_first_logprobs": 16
+    },
+    "lcc": {
+      "n": 16,
+      "baseline": 37.94816089368677,
+      "candidate": 34.30315494792634,
+      "delta_pp": -3.645005945760427,
+      "paired_bootstrap_95_ci_pp": [
+        -8.39526646604169,
+        0.1917871375598518
+      ],
+      "identical_outputs": 5,
+      "identical_first_logprobs": 16
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 52.690746753246756,
+      "candidate": 52.91801948051948,
+      "delta_pp": 0.22727272727272735,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.6818181818181821
+      ],
+      "identical_outputs": 15,
+      "identical_first_logprobs": 16
+    }
+  },
+  "regressions": [
+    {
+      "id": "lcc-54",
+      "dataset": "lcc",
+      "baseline": 0.5490196078431373,
+      "candidate": 0.2535211267605634,
+      "delta_pp": -29.549848108257393,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "if ((ch = string.charAt(offset++)) >= '\\uDC00' && ch <= '\\uDFFF') {",
+      "candidate_text": "if ((ch & 0x3FF) == (ch - 0xD800)) { \n    codePoint = (codePoint - 0xD800) * 0x400 + string.charAt(offset++) + 0x10000; \n    if (codePoint < 0x10FFFF)",
+      "answers": [
+        "            char low = string.charAt(offset++);"
+      ]
+    },
+    {
+      "id": "lcc-482",
+      "dataset": "lcc",
+      "baseline": 0.4155844155844156,
+      "candidate": 0.208955223880597,
+      "delta_pp": -20.662919170381862,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "if sys.argv[ 1 ] == '--train' :",
+      "candidate_text": "if sys.argv[1] == '--train' and sys.argv[2] == '--model' and sys.argv[3] == 'model.txt':",
+      "answers": [
+        "\t\tdatasetfile , field , parents = sys.argv[ 1: ]"
+      ]
+    },
+    {
+      "id": "lcc-443",
+      "dataset": "lcc",
+      "baseline": 0.5217391304347826,
+      "candidate": 0.4166666666666667,
+      "delta_pp": -10.50724637681159,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "z_arr[per-1, 0, 0] = z_dict[z_key][per][0]\nz_arr[per-1, 0, 1] = z_dict[z_key][per][1]\nz_err_arr[per-1, 0, 0] = z_dict[z",
+      "candidate_text": "z_dict[z_key][per][0] = z_dict[z_key][per][0]\nz_dict[z_key][per][1] = z_dict[z_key][per][1]\nz_dict[z_key][per][2] = z_dict[z_key][per][2]\nz_err_dict[z_key][per",
+      "answers": [
+        "                ll = z_index_dict[z_key][1]"
+      ]
+    },
+    {
+      "id": "lcc-27",
+      "dataset": "lcc",
+      "baseline": 0.14285714285714285,
+      "candidate": 0.10526315789473684,
+      "delta_pp": -3.7593984962406015,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "return GetNameForAttribute(i.SkillBonuses.GetSkill(1));",
+      "candidate_text": "return 0;",
+      "answers": [
+        "                if (mod >= 156 && mod <= 160)"
+      ]
+    },
+    {
+      "id": "lcc-163",
+      "dataset": "lcc",
+      "baseline": 0.23880597014925373,
+      "candidate": 0.2222222222222222,
+      "delta_pp": -1.6583747927031518,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "sub.prop(mat, \"use_light_group_local\", text=\"\")",
+      "candidate_text": "sub.prop(mat, \"use_light_group_local\", text=\"Local\")",
+      "answers": [
+        "        col = split.column()"
+      ]
+    },
+    {
+      "id": "lcc-410",
+      "dataset": "lcc",
+      "baseline": 0.416,
+      "candidate": 0.4126984126984127,
+      "delta_pp": -0.33015873015873054,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "self.fm.execute_command(['tar', 'xvf', one_file.path] + au_flags, flags='p')",
+      "candidate_text": "self.fm.execute_command(['tar', '-xvf', one_file.path] + au_flags, flags='p')",
+      "answers": [
+        "        obj = CommandLoader(args=['aunpack'] + au_flags \\"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "lcc-282",
+      "dataset": "lcc",
+      "baseline": 0.3816793893129771,
+      "candidate": 0.4631578947368421,
+      "delta_pp": 8.147850542386498,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "super( new PatternMatchIterator( source ), new PatternMatchFilter( objectVariables ) );",
+      "candidate_text": "super( new PatternValueGetter( objectVariables ) );",
+      "answers": [
+        "            super( source, new Predicate<PatternMatch>()"
+      ]
+    },
+    {
+      "id": "qasper-67",
+      "dataset": "qasper",
+      "baseline": 0.36363636363636365,
+      "candidate": 0.4,
+      "delta_pp": 3.6363636363636376,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "Deep Learning Model and Logistic Regression Classifier.",
+      "candidate_text": "Deep learning models and Logistic Regression.",
+      "answers": [
+        "Logistic Regression, neural networks"
+      ]
+    }
+  ],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}

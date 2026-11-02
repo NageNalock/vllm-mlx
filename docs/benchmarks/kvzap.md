@@ -10,8 +10,9 @@ prefill latency. It does not establish that a larger model fits.
 
 **Validation status:** the frozen candidate missed its pre-specified overall
 quality gate. It remains an experimental draft, not a quality-qualified release
-proposal. A deferred-quantization baseline is being evaluated before choosing a
-follow-up direction.
+proposal. The completed deferred-quantization comparison led to a separate
+[scheduling-only follow-up in fork PR #3](https://github.com/NageNalock/vllm-mlx/pull/3).
+That implementation keeps every token and uses native MLX quantized caches.
 
 ## Scope and usage
 
@@ -145,6 +146,17 @@ full official LongBench benchmark or a proof of universal non-inferiority.
 The 48 questions contain 47 distinct contexts: two Qasper questions share a
 paper. Reported bootstrap intervals resample questions, not document clusters;
 see the [context audit](../../benchmarks/results/kvzap/validation_context_audit.json).
+
+The additional deferred 4-bit baseline completed the same 48 cases. It preserves
+dense prefill, then quantizes the complete cache before decoding. Its mean change
+against full KV is +0.04 points, with one individual answer regression; this
+descriptive comparison does not change the failed KVzap gate. The separate
+follow-up finishes and quantizes one layer at a time. It reproduces all 48
+deferred-baseline outputs and reduces the measured 32K process peak from
+12.83 GiB to 7.66 GiB, with 3.5% more time to first token. See the
+[follow-up report](https://github.com/NageNalock/vllm-mlx/blob/codex/layerwise-kv-prefill/docs/benchmarks/quantized-prefill.md)
+for scope, provenance, and limitations. The reused cases establish implementation
+parity; they are not fresh held-out evidence for the follow-up policy.
 
 A supplementary 32K code-context retrieval task places four configuration
 values at 5%, 25%, 50%, and 75% of the document. It is a small synthetic check,

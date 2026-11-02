@@ -1,0 +1,133 @@
+{
+  "input": [
+    "benchmarks/results/kvzap/layerwise-validation.jsonl",
+    "benchmarks/results/kvzap/deferred-validation.jsonl"
+  ],
+  "baseline": "full",
+  "candidate": "quant4_deferred",
+  "overall": {
+    "n": 48,
+    "baseline": 48.98935420533576,
+    "candidate": 49.02601746125854,
+    "delta_pp": 0.03666325592278663,
+    "paired_bootstrap_95_ci_pp": [
+      -1.605137141815939,
+      1.3409038078419304
+    ],
+    "identical_outputs": 34,
+    "identical_first_logprobs": 48
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 16,
+      "baseline": 58.31414473684211,
+      "candidate": 56.43914473684211,
+      "delta_pp": -1.8750000000000002,
+      "paired_bootstrap_95_ci_pp": [
+        -5.625000000000001,
+        0.0
+      ],
+      "identical_outputs": 13,
+      "identical_first_logprobs": 16
+    },
+    "lcc": {
+      "n": 16,
+      "baseline": 35.96317112591841,
+      "candidate": 37.94816089368677,
+      "delta_pp": 1.9849897677683601,
+      "paired_bootstrap_95_ci_pp": [
+        0.19063180827886758,
+        4.555752534585727
+      ],
+      "identical_outputs": 8,
+      "identical_first_logprobs": 16
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 52.690746753246756,
+      "candidate": 52.690746753246756,
+      "delta_pp": 0.0,
+      "paired_bootstrap_95_ci_pp": [
+        0.0,
+        0.0
+      ],
+      "identical_outputs": 13,
+      "identical_first_logprobs": 16
+    }
+  },
+  "regressions": [
+    {
+      "id": "hotpotqa-65",
+      "dataset": "hotpotqa",
+      "baseline": 0.8,
+      "candidate": 0.5,
+      "delta_pp": -30.000000000000004,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "Vernon L. Smith",
+      "candidate_text": "Vernon L. Smith and Fran\u00e7ois Englert",
+      "answers": [
+        "Vernon Smith"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "lcc-482",
+      "dataset": "lcc",
+      "baseline": 0.24427480916030533,
+      "candidate": 0.4155844155844156,
+      "delta_pp": 17.13096064241103,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "if sys.argv[ 1 ] == '-d' and sys.argv[ 2 ] == '-m' and sys.argv[ 3 ] == 'model.txt' :",
+      "candidate_text": "if sys.argv[ 1 ] == '--train' :",
+      "answers": [
+        "\t\tdatasetfile , field , parents = sys.argv[ 1: ]"
+      ]
+    },
+    {
+      "id": "lcc-443",
+      "dataset": "lcc",
+      "baseline": 0.4225352112676056,
+      "candidate": 0.5217391304347826,
+      "delta_pp": 9.920391916717698,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "z_dict[z_key][per] = z_dict[z_key][per][0:3]",
+      "candidate_text": "z_arr[per-1, 0, 0] = z_dict[z_key][per][0]\nz_arr[per-1, 0, 1] = z_dict[z_key][per][1]\nz_err_arr[per-1, 0, 0] = z_dict[z",
+      "answers": [
+        "                ll = z_index_dict[z_key][1]"
+      ]
+    },
+    {
+      "id": "lcc-54",
+      "dataset": "lcc",
+      "baseline": 0.5185185185185185,
+      "candidate": 0.5490196078431373,
+      "delta_pp": 3.0501089324618813,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "if ((codePoint = (ch = string.charAt(offset++)) + 0x10000) <= 0x10FFFF) {",
+      "candidate_text": "if ((ch = string.charAt(offset++)) >= '\\uDC00' && ch <= '\\uDFFF') {",
+      "answers": [
+        "            char low = string.charAt(offset++);"
+      ]
+    },
+    {
+      "id": "lcc-163",
+      "dataset": "lcc",
+      "baseline": 0.2222222222222222,
+      "candidate": 0.23880597014925373,
+      "delta_pp": 1.6583747927031518,
+      "same_output": false,
+      "same_first_logprobs": true,
+      "baseline_text": "sub.prop(mat, \"use_light_group_local\", text=\"Local\")",
+      "candidate_text": "sub.prop(mat, \"use_light_group_local\", text=\"\")",
+      "answers": [
+        "        col = split.column()"
+      ]
+    }
+  ],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}

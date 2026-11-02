@@ -1,0 +1,9 @@
+{
+  "status": "complete",
+  "completed_at_utc": "2026-11-02T16:31:09.305727+00:00",
+  "completed_cases": 48,
+  "matched_prompt_hashes": 48,
+  "matched_full_kv_first_logprob_hashes": 48,
+  "baseline": "quant4_deferred",
+  "candidate_unchanged": true
+}
