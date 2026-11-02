@@ -1,0 +1,28 @@
+{
+  "manifest_sha256": "5541bc7b47bdc128ac636f493fd222a1f9d586021cec4d0eca48f969daab5cfe",
+  "cases": 48,
+  "unique_contexts": 47,
+  "datasets": {
+    "qasper": {
+      "cases": 16,
+      "unique_contexts": 15,
+      "repeated_context_groups": [
+        [
+          "qasper-27",
+          "qasper-118"
+        ]
+      ]
+    },
+    "hotpotqa": {
+      "cases": 16,
+      "unique_contexts": 16,
+      "repeated_context_groups": []
+    },
+    "lcc": {
+      "cases": 16,
+      "unique_contexts": 16,
+      "repeated_context_groups": []
+    }
+  },
+  "interpretation": "The selection excludes all earlier development/validation contexts, but two newly selected Qasper questions share one context. Reported paired bootstrap intervals resample examples, not document clusters. This small screen does not establish universal non-inferiority."
+}

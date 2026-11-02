@@ -8,6 +8,11 @@ for one layer before compacting that layer's KV and moving to the next layer.
 This lowers prefill peak memory and accelerates decoding, at the cost of some
 prefill latency. It does not establish that a larger model fits.
 
+**Validation status:** the frozen candidate missed its pre-specified overall
+quality gate. It remains an experimental draft, not a quality-qualified release
+proposal. A deferred-quantization baseline is being evaluated before choosing a
+follow-up direction.
+
 ## Scope and usage
 
 The tested checkpoint is
@@ -116,9 +121,30 @@ stratified across 2K-4K, 4K-8K, and 8K-16K prompt lengths; HotpotQA uses 8K-16K.
 Full KV, 4-bit KV, and KVzap use identical prompts and greedy decoding. The
 [`protocol`](../../benchmarks/results/kvzap/layerwise_validation_protocol.json) and
 [`manifest`](../../benchmarks/results/kvzap/dense_validation_manifest.json) record the
-parameters and selection. Results will be inserted after all paired runs finish.
+parameters and selection. All 48 cases have completed:
+
+| Screen | Cases | Full KV | Early 4-bit KV | KVzap | KVzap change vs full |
+|---|---:|---:|---:|---:|---:|
+| Qasper word F1 | 16 | 52.69 | 45.37 | 52.92 | +0.23 pp |
+| HotpotQA word F1 | 16 | 58.31 | 57.66 | 56.44 | -1.88 pp |
+| LCC first-line similarity | 16 | 35.96 | 33.63 | 34.30 | -1.66 pp |
+| Equal-weight mean of these scores | 48 | 48.99 | 45.55 | 47.89 | **-1.10 pp** |
+
+The overall loss exceeds the frozen 1-point gate, even though each dataset stays
+within its 3-point gate. The paired bootstrap 95% interval for the overall change
+is [-2.98, +0.27] points. This is a failed screen; the gate has not been relaxed.
+The first-token log probabilities are identical in all 48 pairs, while complete
+outputs are identical in 35 pairs. All six score regressions are retained in the
+[paired summary](../../benchmarks/results/kvzap/layerwise-quality.json). The largest
+include adding a second person to a single-person answer (`hotpotqa-65`) and
+changing a code completion (`lcc-54`). The code metric measures string similarity,
+not functional correctness; both variants can be wrong despite different scores.
+
 This is a paired regression screen using documented prompts and metrics, not the
 full official LongBench benchmark or a proof of universal non-inferiority.
+The 48 questions contain 47 distinct contexts: two Qasper questions share a
+paper. Reported bootstrap intervals resample questions, not document clusters;
+see the [context audit](../../benchmarks/results/kvzap/validation_context_audit.json).
 
 A supplementary 32K code-context retrieval task places four configuration
 values at 5%, 25%, 50%, and 75% of the document. It is a small synthetic check,

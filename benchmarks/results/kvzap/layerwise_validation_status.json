@@ -1,8 +1,10 @@
 {
-  "status": "running; snapshot for draft review",
+  "status": "failed quality screen",
+  "completed_cases": 48,
   "selected_cases": 48,
-  "completed_cases_at_snapshot": 16,
-  "snapshot_at_utc": "2026-11-02T14:31:27.113587+00:00",
+  "overall_delta_pp": -1.1025811502397798,
+  "early_stop": null,
+  "completed_at_utc": "2026-11-02T15:46:15.889284+00:00",
   "source_commit": "56b6c8e",
-  "note": "This file will be replaced by the final evaluation result. No quality-passing claim is made while evaluation is incomplete."
+  "limitation": "Passing this sample is not a proof of non-inferiority or absence of individual failures."
 }

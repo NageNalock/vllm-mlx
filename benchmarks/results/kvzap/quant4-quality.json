@@ -1,0 +1,246 @@
+{
+  "input": "benchmarks/results/kvzap/layerwise-validation.jsonl",
+  "baseline": "full",
+  "candidate": "quant4",
+  "overall": {
+    "n": 48,
+    "baseline": 48.98935420533576,
+    "candidate": 45.55313483002417,
+    "delta_pp": -3.436219375311584,
+    "paired_bootstrap_95_ci_pp": [
+      -8.734474800935066,
+      0.31236400435985295
+    ],
+    "identical_outputs": 28,
+    "identical_first_logprobs": 0
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 16,
+      "baseline": 58.31414473684211,
+      "candidate": 57.65625,
+      "delta_pp": -0.6578947368421052,
+      "paired_bootstrap_95_ci_pp": [
+        -1.9736842105263155,
+        0.0
+      ],
+      "identical_outputs": 12,
+      "identical_first_logprobs": 0
+    },
+    "lcc": {
+      "n": 16,
+      "baseline": 35.96317112591841,
+      "candidate": 33.63113068054871,
+      "delta_pp": -2.332040445369702,
+      "paired_bootstrap_95_ci_pp": [
+        -8.148902200160897,
+        2.7028362939287325
+      ],
+      "identical_outputs": 7,
+      "identical_first_logprobs": 0
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 52.690746753246756,
+      "candidate": 45.37202380952382,
+      "delta_pp": -7.3187229437229435,
+      "paired_bootstrap_95_ci_pp": [
+        -21.904694264069263,
+        1.6801948051948048
+      ],
+      "identical_outputs": 9,
+      "identical_first_logprobs": 0
+    }
+  },
+  "regressions": [
+    {
+      "id": "qasper-70",
+      "dataset": "qasper",
+      "baseline": 1.0,
+      "candidate": 0.0,
+      "delta_pp": -100.0,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "unanswerable",
+      "candidate_text": "no",
+      "answers": [
+        "Unanswerable",
+        "Unanswerable"
+      ]
+    },
+    {
+      "id": "lcc-54",
+      "dataset": "lcc",
+      "baseline": 0.5185185185185185,
+      "candidate": 0.17647058823529413,
+      "delta_pp": -34.204793028322435,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "if ((codePoint = (ch = string.charAt(offset++)) + 0x10000) <= 0x10FFFF) {",
+      "candidate_text": "if ((codePoint & 0x3FF) == 0x0) {",
+      "answers": [
+        "            char low = string.charAt(offset++);"
+      ]
+    },
+    {
+      "id": "qasper-159",
+      "dataset": "qasper",
+      "baseline": 0.3333333333333333,
+      "candidate": 0.0,
+      "delta_pp": -33.33333333333333,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Rei2016",
+      "candidate_text": "unanswerable",
+      "answers": [
+        "error detection system by Rei2016",
+        "error detection system by Rei2016"
+      ]
+    },
+    {
+      "id": "lcc-125",
+      "dataset": "lcc",
+      "baseline": 0.5875706214689266,
+      "candidate": 0.39344262295081966,
+      "delta_pp": -19.412799851810693,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "public static Builder CreateBuilder(SendInvitationRequest prototype) { return (Builder) new Builder().MergeFrom(prototype); }",
+      "candidate_text": "public static Builder CreateBuilder(SendInvitationRequest prototype) {",
+      "answers": [
+        "      return (Builder) new Builder().MergeFrom(prototype);"
+      ]
+    },
+    {
+      "id": "lcc-410",
+      "dataset": "lcc",
+      "baseline": 0.416,
+      "candidate": 0.3063063063063063,
+      "delta_pp": -10.96936936936937,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "self.fm.execute_command(['tar', 'xvf', one_file.path] + au_flags, flags='p')",
+      "candidate_text": "self.fm.execute_command('tar', flags='xf', path=one_file.path)",
+      "answers": [
+        "        obj = CommandLoader(args=['aunpack'] + au_flags \\"
+      ]
+    },
+    {
+      "id": "hotpotqa-176",
+      "dataset": "hotpotqa",
+      "baseline": 0.10526315789473684,
+      "candidate": 0.0,
+      "delta_pp": -10.526315789473683,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "There is no information in the given passages about John Paesano writing a film for DreamWorks Dragons.",
+      "candidate_text": "Maze Runner",
+      "answers": [
+        "Dragons: Riders of Berk"
+      ]
+    },
+    {
+      "id": "lcc-122",
+      "dataset": "lcc",
+      "baseline": 0.30612244897959184,
+      "candidate": 0.273972602739726,
+      "delta_pp": -3.214984623986583,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "this.spinbuttonCpuPercent = new global::Gtk.SpinButton (0D, 100D, 1D);",
+      "candidate_text": "this.spinbuttonCheckPeriod.ValueAsText = \"1\";",
+      "answers": [
+        "\t\t\tw10.TopAttach = ((uint)(1));"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "lcc-443",
+      "dataset": "lcc",
+      "baseline": 0.4225352112676056,
+      "candidate": 0.5915492957746479,
+      "delta_pp": 16.901408450704224,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "z_dict[z_key][per] = z_dict[z_key][per][0:3]",
+      "candidate_text": "z_arr[p_index, 0, 0] = z_dict[z_key][per][0]\nz_arr[p_index, 0, 1] = z_dict[z_key][per][1]\nz_err_arr[p_index, 0, 0] = z_dict[z_key][per][2]\n",
+      "answers": [
+        "                ll = z_index_dict[z_key][1]"
+      ]
+    },
+    {
+      "id": "lcc-163",
+      "dataset": "lcc",
+      "baseline": 0.2222222222222222,
+      "candidate": 0.3333333333333333,
+      "delta_pp": 11.11111111111111,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "sub.prop(mat, \"use_light_group_local\", text=\"Local\")",
+      "candidate_text": "col.prop(mat, \"light_group_mask\", text=\"Mask\")",
+      "answers": [
+        "        col = split.column()"
+      ]
+    },
+    {
+      "id": "qasper-193",
+      "dataset": "qasper",
+      "baseline": 0.5,
+      "candidate": 0.5714285714285714,
+      "delta_pp": 7.14285714285714,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Eusboost, MWMOTE, MLP, and state-of-the-art methods.",
+      "candidate_text": "Eusboost, MWMOTE, MLP, and WEKA.",
+      "answers": [
+        "MLP",
+        "Eusboost, MWMOTE"
+      ]
+    },
+    {
+      "id": "qasper-104",
+      "dataset": "qasper",
+      "baseline": 0.5454545454545454,
+      "candidate": 0.6,
+      "delta_pp": 5.454545454545457,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "GloVe and Edinburgh embeddings.",
+      "candidate_text": "GloVe, Edinburgh embeddings.",
+      "answers": [
+        "Pretrained word embeddings  were not used",
+        "GloVe, Edinburgh embeddings BIBREF14, Emoji embeddings BIBREF16"
+      ]
+    },
+    {
+      "id": "qasper-67",
+      "dataset": "qasper",
+      "baseline": 0.36363636363636365,
+      "candidate": 0.4,
+      "delta_pp": 3.6363636363636376,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Deep learning model and Logistic Regression Classifier.",
+      "candidate_text": "Logistic Regression and Deep Learning Model.",
+      "answers": [
+        "Logistic Regression, neural networks"
+      ]
+    },
+    {
+      "id": "lcc-333",
+      "dataset": "lcc",
+      "baseline": 0.21052631578947367,
+      "candidate": 0.23529411764705882,
+      "delta_pp": 2.476780185758515,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "tokens.NextValidToken();",
+      "candidate_text": "xrefObj.Add(null);",
+      "answers": [
+        "                fout.Write(curr, 0, curr.Length);"
+      ]
+    }
+  ],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}

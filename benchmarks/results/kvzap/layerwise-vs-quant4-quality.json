@@ -1,0 +1,288 @@
+{
+  "input": "benchmarks/results/kvzap/layerwise-validation.jsonl",
+  "baseline": "quant4",
+  "candidate": "kvzap",
+  "overall": {
+    "n": 48,
+    "baseline": 45.55313483002417,
+    "candidate": 47.88677305509597,
+    "delta_pp": 2.3336382250718035,
+    "paired_bootstrap_95_ci_pp": [
+      -1.5538830410470945,
+      7.703071523481743
+    ],
+    "identical_outputs": 23,
+    "identical_first_logprobs": 0
+  },
+  "datasets": {
+    "hotpotqa": {
+      "n": 16,
+      "baseline": 57.65625,
+      "candidate": 56.43914473684211,
+      "delta_pp": -1.2171052631578951,
+      "paired_bootstrap_95_ci_pp": [
+        -5.625000000000001,
+        1.9736842105263155
+      ],
+      "identical_outputs": 11,
+      "identical_first_logprobs": 0
+    },
+    "lcc": {
+      "n": 16,
+      "baseline": 33.63113068054871,
+      "candidate": 34.30315494792634,
+      "delta_pp": 0.6720242673776347,
+      "paired_bootstrap_95_ci_pp": [
+        -3.3337629553924866,
+        4.763943379859592
+      ],
+      "identical_outputs": 3,
+      "identical_first_logprobs": 0
+    },
+    "qasper": {
+      "n": 16,
+      "baseline": 45.37202380952382,
+      "candidate": 52.91801948051948,
+      "delta_pp": 7.545995670995671,
+      "paired_bootstrap_95_ci_pp": [
+        -1.3392857142857137,
+        22.129329004329
+      ],
+      "identical_outputs": 9,
+      "identical_first_logprobs": 0
+    }
+  },
+  "regressions": [
+    {
+      "id": "hotpotqa-65",
+      "dataset": "hotpotqa",
+      "baseline": 0.8,
+      "candidate": 0.5,
+      "delta_pp": -30.000000000000004,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Vernon L. Smith",
+      "candidate_text": "Vernon L. Smith and Fran\u00e7ois Englert",
+      "answers": [
+        "Vernon Smith"
+      ]
+    },
+    {
+      "id": "lcc-443",
+      "dataset": "lcc",
+      "baseline": 0.5915492957746479,
+      "candidate": 0.4166666666666667,
+      "delta_pp": -17.48826291079812,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "z_arr[p_index, 0, 0] = z_dict[z_key][per][0]\nz_arr[p_index, 0, 1] = z_dict[z_key][per][1]\nz_err_arr[p_index, 0, 0] = z_dict[z_key][per][2]\n",
+      "candidate_text": "z_dict[z_key][per][0] = z_dict[z_key][per][0]\nz_dict[z_key][per][1] = z_dict[z_key][per][1]\nz_dict[z_key][per][2] = z_dict[z_key][per][2]\nz_err_dict[z_key][per",
+      "answers": [
+        "                ll = z_index_dict[z_key][1]"
+      ]
+    },
+    {
+      "id": "lcc-163",
+      "dataset": "lcc",
+      "baseline": 0.3333333333333333,
+      "candidate": 0.2222222222222222,
+      "delta_pp": -11.11111111111111,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "col.prop(mat, \"light_group_mask\", text=\"Mask\")",
+      "candidate_text": "sub.prop(mat, \"use_light_group_local\", text=\"Local\")",
+      "answers": [
+        "        col = split.column()"
+      ]
+    },
+    {
+      "id": "qasper-193",
+      "dataset": "qasper",
+      "baseline": 0.5714285714285714,
+      "candidate": 0.5,
+      "delta_pp": -7.14285714285714,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Eusboost, MWMOTE, MLP, and WEKA.",
+      "candidate_text": "Eusboost, MWMOTE, MLP, and state-of-the-art methods.",
+      "answers": [
+        "MLP",
+        "Eusboost, MWMOTE"
+      ]
+    },
+    {
+      "id": "qasper-104",
+      "dataset": "qasper",
+      "baseline": 0.6,
+      "candidate": 0.5454545454545454,
+      "delta_pp": -5.454545454545457,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "GloVe, Edinburgh embeddings.",
+      "candidate_text": "GloVe and Edinburgh embeddings.",
+      "answers": [
+        "Pretrained word embeddings  were not used",
+        "GloVe, Edinburgh embeddings BIBREF14, Emoji embeddings BIBREF16"
+      ]
+    },
+    {
+      "id": "lcc-27",
+      "dataset": "lcc",
+      "baseline": 0.14285714285714285,
+      "candidate": 0.10526315789473684,
+      "delta_pp": -3.7593984962406015,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "return GetNameForAttribute(i.SkillBonuses.GetSkill(0));",
+      "candidate_text": "return 0;",
+      "answers": [
+        "                if (mod >= 156 && mod <= 160)"
+      ]
+    },
+    {
+      "id": "lcc-482",
+      "dataset": "lcc",
+      "baseline": 0.24427480916030533,
+      "candidate": 0.208955223880597,
+      "delta_pp": -3.5319585279708328,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "if sys.argv[ 1 ] == '-d' and sys.argv[ 2 ] == '-m' and sys.argv[ 3 ] == 'model.txt' :",
+      "candidate_text": "if sys.argv[1] == '--train' and sys.argv[2] == '--model' and sys.argv[3] == 'model.txt':",
+      "answers": [
+        "\t\tdatasetfile , field , parents = sys.argv[ 1: ]"
+      ]
+    },
+    {
+      "id": "lcc-333",
+      "dataset": "lcc",
+      "baseline": 0.23529411764705882,
+      "candidate": 0.21052631578947367,
+      "delta_pp": -2.476780185758515,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "xrefObj.Add(null);",
+      "candidate_text": "tokens.NextValidToken();",
+      "answers": [
+        "                fout.Write(curr, 0, curr.Length);"
+      ]
+    }
+  ],
+  "improvements": [
+    {
+      "id": "qasper-70",
+      "dataset": "qasper",
+      "baseline": 0.0,
+      "candidate": 1.0,
+      "delta_pp": 100.0,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "no",
+      "candidate_text": "unanswerable",
+      "answers": [
+        "Unanswerable",
+        "Unanswerable"
+      ]
+    },
+    {
+      "id": "qasper-159",
+      "dataset": "qasper",
+      "baseline": 0.0,
+      "candidate": 0.3333333333333333,
+      "delta_pp": 33.33333333333333,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "unanswerable",
+      "candidate_text": "Rei2016",
+      "answers": [
+        "error detection system by Rei2016",
+        "error detection system by Rei2016"
+      ]
+    },
+    {
+      "id": "lcc-125",
+      "dataset": "lcc",
+      "baseline": 0.39344262295081966,
+      "candidate": 0.5875706214689266,
+      "delta_pp": 19.412799851810693,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "public static Builder CreateBuilder(SendInvitationRequest prototype) {",
+      "candidate_text": "public static Builder CreateBuilder(SendInvitationRequest prototype) { return (Builder) new Builder().MergeFrom(prototype); }",
+      "answers": [
+        "      return (Builder) new Builder().MergeFrom(prototype);"
+      ]
+    },
+    {
+      "id": "lcc-410",
+      "dataset": "lcc",
+      "baseline": 0.3063063063063063,
+      "candidate": 0.4126984126984127,
+      "delta_pp": 10.639210639210638,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "self.fm.execute_command('tar', flags='xf', path=one_file.path)",
+      "candidate_text": "self.fm.execute_command(['tar', '-xvf', one_file.path] + au_flags, flags='p')",
+      "answers": [
+        "        obj = CommandLoader(args=['aunpack'] + au_flags \\"
+      ]
+    },
+    {
+      "id": "hotpotqa-176",
+      "dataset": "hotpotqa",
+      "baseline": 0.0,
+      "candidate": 0.10526315789473684,
+      "delta_pp": 10.526315789473683,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "Maze Runner",
+      "candidate_text": "There is no information in the provided passages about John Paesano writing a film for DreamWorks Dragons.",
+      "answers": [
+        "Dragons: Riders of Berk"
+      ]
+    },
+    {
+      "id": "lcc-282",
+      "dataset": "lcc",
+      "baseline": 0.3816793893129771,
+      "candidate": 0.4631578947368421,
+      "delta_pp": 8.147850542386498,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "super( new PatternMatchIterator( source ), new PatternMatchFilter( objectVariables ) );",
+      "candidate_text": "super( new PatternValueGetter( objectVariables ) );",
+      "answers": [
+        "            super( source, new Predicate<PatternMatch>()"
+      ]
+    },
+    {
+      "id": "lcc-54",
+      "dataset": "lcc",
+      "baseline": 0.17647058823529413,
+      "candidate": 0.2535211267605634,
+      "delta_pp": 7.705053852526925,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "if ((codePoint & 0x3FF) == 0x0) {",
+      "candidate_text": "if ((ch & 0x3FF) == (ch - 0xD800)) { \n    codePoint = (codePoint - 0xD800) * 0x400 + string.charAt(offset++) + 0x10000; \n    if (codePoint < 0x10FFFF)",
+      "answers": [
+        "            char low = string.charAt(offset++);"
+      ]
+    },
+    {
+      "id": "lcc-122",
+      "dataset": "lcc",
+      "baseline": 0.273972602739726,
+      "candidate": 0.30612244897959184,
+      "delta_pp": 3.214984623986583,
+      "same_output": false,
+      "same_first_logprobs": false,
+      "baseline_text": "this.spinbuttonCheckPeriod.ValueAsText = \"1\";",
+      "candidate_text": "this.spinbuttonCpuPercent = new global::Gtk.SpinButton (0D, 100D, 1D);",
+      "answers": [
+        "\t\t\tw10.TopAttach = ((uint)(1));"
+      ]
+    }
+  ],
+  "limitations": "Paired regression screen, not the full official LongBench evaluation. Bootstrap intervals reflect only this sample and model; they do not establish universal non-inferiority."
+}
