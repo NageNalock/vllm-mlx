@@ -22,6 +22,11 @@ is [KVzap on Apple Silicon](../../../docs/benchmarks/kvzap.md).
   every individual score regression or improvement.
 - `long-32k-*.jsonl`: fixed 1024-token generation measurements, run only if the
   complete fresh quality screen passes. These may therefore be absent.
+- `deferred_quantization_protocol.json`: an additional baseline using MLX-LM's
+  existing `quantized_kv_start=prompt length` option. It keeps dense full-precision
+  prefill before quantizing the cache to 4 bits. The candidate and primary quality
+  gates stay unchanged; this comparison separates prefill precision from the
+  decode-time cache policy.
 - `verification.json`: numerical, lifecycle, API, full-suite, and static checks.
 
 `dense-32k-full.jsonl` and `dense-32k-quant4.jsonl` are isolated baselines. The

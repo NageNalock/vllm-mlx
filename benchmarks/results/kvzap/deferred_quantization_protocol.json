@@ -1,0 +1,24 @@
+{
+  "frozen_at_utc": "2026-11-02T15:11:48.062784+00:00",
+  "purpose": "Add an existing quality-oriented MLX-LM baseline, separating dense-prefill precision from decode-time cache policy.",
+  "configuration": "kv_bits=4, quantized_kv_start=prompt length, group size 64, prefill chunks 2048. Ordinary MLX-LM execution; no layerwise scheduling or pruning.",
+  "candidate_unchanged": true,
+  "candidate_source_commit": "56b6c8e",
+  "baseline_mode": "quant4_deferred",
+  "validation_manifest": "dense_validation_manifest.json",
+  "validation_cases": 48,
+  "selection_note": "The exact same 48 examples and outputs are used for a descriptive additional baseline, without candidate tuning or changing primary quality gates. 26 primary paired cases were complete when this addendum was written.",
+  "performance": {
+    "prompt_tokens": 32768,
+    "generation_tokens": [
+      128,
+      1024
+    ],
+    "trials": 1
+  },
+  "analysis": "Compare all 48 quality pairs with full KV and KVzap; report individual regressions and paired bootstrap intervals. Report actual physical peak, resident KV, TTFT, decode, and total request latency. Do not infer that deferred quantization has low peak memory from its small final cache.",
+  "source_sha256": {
+    "benchmarks/bench_kvzap_deferred_quantization.py": "9267450be4ea88cf34ed8ce87aa87a0407171bf2abc3b77e19712fc8ddac5d6c"
+  },
+  "execution": "Run sequentially after the primary frozen evaluation completes; never overlap GPU measurements."
+}

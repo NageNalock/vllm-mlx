@@ -48,7 +48,7 @@ text-only `SimpleEngine`, without continuous batching, speculative decoding,
 SpecPrefill, or a rotating KV cache. They bypass system and prefix-cache reuse.
 That tradeoff can be substantial for repeated questions about the same document.
 
-Compression happens once after the entire prompt has been evaluated. Generated
+Each layer is compressed once, after it has evaluated the entire prompt. Generated
 tokens remain unpruned, so their memory use grows with the answer. There is no
 automatic threshold tuning, support for cache serialization, or claimed
 lossless quality guarantee. Short prompts may save little memory or run slower.
