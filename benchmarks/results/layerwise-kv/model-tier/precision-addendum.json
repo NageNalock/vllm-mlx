@@ -1,0 +1,16 @@
+{
+  "registered_utc": "2026-11-03T05:30:17.557151+00:00",
+  "parent_protocol_commit": "3fe6917eafc62fd7c7cc4dde5a758efcf45df992",
+  "reason_for_extension": "After observing the first three primary HTTP requests: 4B default got 2/7 exact fields, 8B default got 4/7, 8B layerwise4 got 2/7. The 4-bit candidate improved footprint but changed the correct EngineBusy diagnosis. All primary runs and their original strict gate are retained. No 8-bit or 14B audit outputs had been inspected when this addendum was written.",
+  "unchanged_workload": "Identical original 22817-token message, template, hardware, greedy/EOS rules, seven exact fields, <=300 s TTFT, >=5 tok/s, two fresh runs for a qualified claim. No alternate prompts or relaxed scores.",
+  "models": {
+    "14B": [
+      "mlx-community/Qwen3-14B-4bit",
+      "a4d9b2df59d2c150bef02fcbe0d91046b7ca33a4"
+    ]
+  },
+  "precision_sensitivity": "Always run two real HTTP 8B layerwise8 requests against the same minimum default-4B reference. Compare direct 8B layerwise8, deferred8/2048, and early8/start5000/2048. Report exact successful fields and all failures versus default 8B; matching default-model errors is not a 7/7 answer.",
+  "next_tier_screen": "One fresh HTTP 14B default, 14B layerwise8, and 14B layerwise4 request each. The new smaller-model reference is the lower of the original two default 8B server peaks. Report all three regardless of outcome.",
+  "confirmation": "If a 14B candidate fits that 8B reference and meets all seven answer fields plus time/rate gates on screen, select 8-bit if both pass. Repeat the selected candidate and default 14B in fresh servers. Run matched direct 14B layerwise, deferred/2048, deferred/128, early/start5000/2048, early/start0/128, plus 8B deferred/128 at the selected precision if not already measured. Report any passing original alternative. If both 14B candidates miss any gate, stop after the screen.",
+  "scope": "This follow-up is exploratory relative to the original 4B-to-8B registration. No additional checkpoints, cache widths or task selection in this comparison. Crossover means measured process footprint of the named baseline, not a hardware OOM boundary."
+}
