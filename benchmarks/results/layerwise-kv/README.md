@@ -1,5 +1,7 @@
 # Layerwise quantized-prefill evidence
 
+The [final review rerun](review-rerun.json) covers the request-local decoder, the matched direct comparison, the stock 8B HTTP answer and the base-versus-candidate tests. It records the exact revisions and source hashes. The measurements below preserve the earlier implementation.
+
 The native implementation is frozen at `8f0b640`. The main report is
 [Layerwise quantized KV prefill](../../../docs/benchmarks/quantized-prefill.md).
 

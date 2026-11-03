@@ -1,5 +1,7 @@
 # Layerwise quantized KV prefill
 
+The original study is preserved below. The [review rerun](../../benchmarks/results/layerwise-kv/review-rerun.json) checks the final request-local decoder, the existing server chunk-size option, and the current test suites. The current decoder shares weights without replacing the loaded model's decoder.
+
 This opt-in path lowers the memory peak of full-precision dense prefill followed
 by KV quantization. It finishes the entire prompt for one layer, converts that
 layer to MLX's native `QuantizedKVCache`, and releases its dense cache before

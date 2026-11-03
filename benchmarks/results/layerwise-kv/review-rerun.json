@@ -1,0 +1,472 @@
+{
+  "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+  "tested_runtime_commit": "1b2e3a2b5e84281f8a8f7f6bbefae85f95da72ca",
+  "runtime_sha256": {
+    "vllm_mlx/api/models.py": "c149766d1ef84bf603020146f5b358aae7457d61a20ca091967b8ade0d4a5015",
+    "vllm_mlx/engine/simple.py": "a039d3718b5e7909d81195ca94ab44a47c6e72dff041a4d9e1078b42315df040",
+    "vllm_mlx/models/llm.py": "c0ed34c57fcb03567fae4d4cf9916df18af7109aed2fb70846d3b4f8355070f1",
+    "vllm_mlx/quantized_prefill.py": "4a588f81fb99915a2c1a23983ff7f7cda7f6db5f354650c38734ec85038814c2",
+    "vllm_mlx/server.py": "1f48832de8e77d9b0262f31d37cb0b10154de0365a570d924a5c1dd043456e7e"
+  },
+  "test_sources_sha256": {
+    "tests/test_lifecycle_server.py": "88d660f7b4e14e67107d9525be7c11b7a0ae568a97036dd76861d45e3a2ee77e",
+    "tests/test_quantized_prefill.py": "51a07b778a29c42cc94890a165db835fc330baeba24536ea52951abe56cd3173"
+  },
+  "hardware": "Apple M1 Pro, 32 GiB unified memory",
+  "runtime": {
+    "macos": "26.6.2",
+    "python": "3.12.15",
+    "mlx": "0.32.4",
+    "mlx_lm": "0.31.3",
+    "transformers": "5.22.1"
+  },
+  "workload": "model-tier/protocol.json",
+  "precision_followup": "model-tier/precision-addendum.json",
+  "historical_comparators": "model-tier/runs.jsonl",
+  "stock_4b_http": [
+    "a",
+    "f"
+  ],
+  "stock_8b_http": [
+    "b",
+    "e"
+  ],
+  "measurement": "Each review run used one fresh process and 4-bit model weights. HTTP peak and RSS come from the server. Direct and HTTP timings start after warmup. Each /usr/bin/time -l footer covers loading, warmup and inference.",
+  "matching": "HTTP text matches both historical stock 8B responses. The two direct runs match on prompt/output token hashes, normalized first-token logprob hashes, and cache sizes at first yield and completion.",
+  "direct_measurement_revision": "fe6c12def668c7823c213e4bd76876bf9d94558e",
+  "direct_provenance": "The direct benchmark and the layerwise decoder module are byte-identical to the final reviewed revision. The later serving change forwards the existing server chunk size (2048 by default). The final HTTP rerun and tests use the full updated server.",
+  "runs": [
+    {
+      "protocol_sha256": "2f63ecad06586e684226a8d8b0f08944ed1d8d357035462261fa369a5ba103ba",
+      "engine_source": "1b2e3a2b5e84281f8a8f7f6bbefae85f95da72ca",
+      "run": "final-http",
+      "transport": "http",
+      "size": "8B",
+      "mode": "quant8_layerwise",
+      "step": 2048,
+      "start": 5000,
+      "began": "2026-11-03T10:44:02.881143+00:00",
+      "ended": "2026-11-03T10:47:05.245641+00:00",
+      "pressure_samples": {
+        "1": 185
+      },
+      "status": "completed",
+      "stop_reason": null,
+      "audit": {
+        "ttft_s": 171.65894212498097,
+        "total_s": 175.91597245802404,
+        "decode_tps": 16.678293186895544,
+        "prompt_tokens": 22817,
+        "generation_tokens": 72,
+        "text": "{\n  \"exception\": \"EngineBusy\",\n  \"counter\": 1,\n  \"status\": 503,\n  \"error\": \"text_generation_busy\",\n  \"environment\": \"VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION=fail_fast\",\n  \"wait_value\": 0,\n  \"retry_after\": false\n}",
+        "system_before": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640646144,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 3688349696,
+          "pressure_level": 1,
+          "max_rss_bytes": 40845312
+        },
+        "system_after": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640646144,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 3537731584,
+          "pressure_level": 1,
+          "max_rss_bytes": 41287680
+        },
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact_answer": false,
+        "event": "audit",
+        "model": "mlx-community/Qwen3-8B-4bit",
+        "revision": "545dc4251c05440727734bcd94334791f6ab0192",
+        "size": "8B",
+        "mode": "quant8_layerwise",
+        "transport": "http",
+        "user_message_sha256": "e394d0567264bcb0999a55b9506ef25c239d22627f6b213e666057df539e2498",
+        "answer_text_sha256": "2142a6afb3ae48aae270f0fb475ca09012b012439e15164ee75a71a64aad9580"
+      },
+      "physical_peak_bytes": 8383861224,
+      "time_footer": [
+        "      182.34 real         4.93 user         3.55 sys",
+        "          5271879680  maximum resident set size",
+        "                   0  average shared memory size",
+        "                   0  average unshared data size",
+        "                   0  average unshared stack size",
+        "              348294  page reclaims",
+        "                  24  page faults",
+        "                   0  swaps",
+        "                   0  block input operations",
+        "                   0  block output operations",
+        "                 195  messages sent",
+        "                  83  messages received",
+        "                   1  signals received",
+        "                 987  voluntary context switches",
+        "               35999  involuntary context switches",
+        "         56484876008  instructions retired",
+        "         23406077065  cycles elapsed",
+        "          8383861224  peak memory footprint"
+      ],
+      "server_exit_after_requested_shutdown": -15,
+      "benchmark_commit": "1b2e3a2b5e84281f8a8f7f6bbefae85f95da72ca"
+    },
+    {
+      "protocol_sha256": "2f63ecad06586e684226a8d8b0f08944ed1d8d357035462261fa369a5ba103ba",
+      "engine_source": "fe6c12def668c7823c213e4bd76876bf9d94558e",
+      "run": "review-deferred",
+      "transport": "direct",
+      "size": "8B",
+      "mode": "quant8_deferred",
+      "step": 2048,
+      "start": 5000,
+      "began": "2026-11-03T10:35:13.616715+00:00",
+      "ended": "2026-11-03T10:38:10.376084+00:00",
+      "pressure_samples": {
+        "1": 88
+      },
+      "status": "completed",
+      "stop_reason": null,
+      "audit": {
+        "mode": "quant8_deferred",
+        "prompt_tokens": 22817,
+        "generation_tokens": 71,
+        "ttft_s": 166.262385082955,
+        "decode_tps": 17.004663021282244,
+        "total_s": 170.37890299997525,
+        "kv_bytes_first": 1804861440,
+        "kv_bytes_end": 1804861440,
+        "active_bytes_first": 6776776044,
+        "physical_footprint_first": 10520334824,
+        "physical_footprint_end": 7219368424,
+        "active_bytes_end": 6432097514,
+        "peak_bytes": 8609416564,
+        "system_before": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640089088,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2090139648,
+          "pressure_level": 1,
+          "max_rss_bytes": 5124554752
+        },
+        "system_after": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640220160,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2085666816,
+          "pressure_level": 1,
+          "max_rss_bytes": 5124554752
+        },
+        "text": "{\n  \"exception\": \"EngineBusy\",\n  \"counter\": 1,\n  \"status\": 503,\n  \"error\": \"text_generation_busy\",\n  \"environment\": \"VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION=fail_fast\",\n  \"wait_value\": 0,\n  \"retry_after\": false\n}",
+        "output_sha256": "01df9d1f7d49e0c80f47c10dfa90be2f68649f8b56418ba440ebecd632f1fe87",
+        "prompt_sha256": "617b0d7cb8c2383802598e2a94abd74c3820df3575eef09cf4673ea669a6c671",
+        "first_logprobs_sha256": "fee4020af362cc460c50259dd12d2f213494e997b0fe4c75c312bd26f9f07d92",
+        "active_bytes_after_release": 4607731720,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact_answer": false,
+        "event": "audit",
+        "model": "mlx-community/Qwen3-8B-4bit",
+        "revision": "545dc4251c05440727734bcd94334791f6ab0192",
+        "size": "8B",
+        "transport": "direct",
+        "user_message_sha256": "e394d0567264bcb0999a55b9506ef25c239d22627f6b213e666057df539e2498",
+        "answer_text_sha256": "2142a6afb3ae48aae270f0fb475ca09012b012439e15164ee75a71a64aad9580"
+      },
+      "physical_peak_bytes": 11896738280,
+      "time_footer": [
+        "      175.24 real         3.79 user         4.71 sys",
+        "          5124554752  maximum resident set size",
+        "                   0  average shared memory size",
+        "                   0  average unshared data size",
+        "                   0  average unshared stack size",
+        "              359369  page reclaims",
+        "                  45  page faults",
+        "                   0  swaps",
+        "                   0  block input operations",
+        "                   0  block output operations",
+        "                   0  messages sent",
+        "                   0  messages received",
+        "                   0  signals received",
+        "                  72  voluntary context switches",
+        "               26288  involuntary context switches",
+        "         52214356176  instructions retired",
+        "         22050859376  cycles elapsed",
+        "         11896738280  peak memory footprint"
+      ],
+      "benchmark_commit": "fe6c12def668c7823c213e4bd76876bf9d94558e"
+    },
+    {
+      "protocol_sha256": "2f63ecad06586e684226a8d8b0f08944ed1d8d357035462261fa369a5ba103ba",
+      "engine_source": "fe6c12def668c7823c213e4bd76876bf9d94558e",
+      "run": "review-layerwise",
+      "transport": "direct",
+      "size": "8B",
+      "mode": "quant8_layerwise",
+      "step": 2048,
+      "start": 5000,
+      "began": "2026-11-03T10:38:10.390517+00:00",
+      "ended": "2026-11-03T10:41:15.156351+00:00",
+      "pressure_samples": {
+        "1": 92
+      },
+      "status": "completed",
+      "stop_reason": null,
+      "audit": {
+        "mode": "quant8_layerwise",
+        "prompt_tokens": 22817,
+        "generation_tokens": 71,
+        "ttft_s": 172.7011757500004,
+        "decode_tps": 17.03439463301954,
+        "total_s": 176.81050874997163,
+        "kv_bytes_first": 1804861440,
+        "kv_bytes_end": 1804861440,
+        "active_bytes_first": 6424765126,
+        "physical_footprint_first": 6857625896,
+        "physical_footprint_end": 6857691432,
+        "active_bytes_end": 6432097514,
+        "peak_bytes": 7132489748,
+        "system_before": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640220160,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2085568512,
+          "pressure_level": 1,
+          "max_rss_bytes": 5121802240
+        },
+        "system_after": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640351232,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2040119296,
+          "pressure_level": 1,
+          "max_rss_bytes": 5121802240
+        },
+        "text": "{\n  \"exception\": \"EngineBusy\",\n  \"counter\": 1,\n  \"status\": 503,\n  \"error\": \"text_generation_busy\",\n  \"environment\": \"VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION=fail_fast\",\n  \"wait_value\": 0,\n  \"retry_after\": false\n}",
+        "output_sha256": "01df9d1f7d49e0c80f47c10dfa90be2f68649f8b56418ba440ebecd632f1fe87",
+        "prompt_sha256": "617b0d7cb8c2383802598e2a94abd74c3820df3575eef09cf4673ea669a6c671",
+        "first_logprobs_sha256": "fee4020af362cc460c50259dd12d2f213494e997b0fe4c75c312bd26f9f07d92",
+        "active_bytes_after_release": 4607731720,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact_answer": false,
+        "event": "audit",
+        "model": "mlx-community/Qwen3-8B-4bit",
+        "revision": "545dc4251c05440727734bcd94334791f6ab0192",
+        "size": "8B",
+        "transport": "direct",
+        "user_message_sha256": "e394d0567264bcb0999a55b9506ef25c239d22627f6b213e666057df539e2498",
+        "answer_text_sha256": "2142a6afb3ae48aae270f0fb475ca09012b012439e15164ee75a71a64aad9580"
+      },
+      "physical_peak_bytes": 8263307560,
+      "time_footer": [
+        "      182.85 real         3.74 user         3.66 sys",
+        "          5121802240  maximum resident set size",
+        "                   0  average shared memory size",
+        "                   0  average unshared data size",
+        "                   0  average unshared stack size",
+        "              358856  page reclaims",
+        "                  55  page faults",
+        "                   0  swaps",
+        "                   0  block input operations",
+        "                   0  block output operations",
+        "                   0  messages sent",
+        "                   0  messages received",
+        "                   0  signals received",
+        "                3913  voluntary context switches",
+        "               25226  involuntary context switches",
+        "         47423445783  instructions retired",
+        "         19916225568  cycles elapsed",
+        "          8263307560  peak memory footprint"
+      ],
+      "benchmark_commit": "fe6c12def668c7823c213e4bd76876bf9d94558e"
+    },
+    {
+      "protocol_sha256": "2f63ecad06586e684226a8d8b0f08944ed1d8d357035462261fa369a5ba103ba",
+      "engine_source": "fe6c12def668c7823c213e4bd76876bf9d94558e",
+      "run": "review-http",
+      "transport": "http",
+      "size": "8B",
+      "mode": "quant8_layerwise",
+      "step": 2048,
+      "start": 5000,
+      "began": "2026-11-03T10:32:11.259989+00:00",
+      "ended": "2026-11-03T10:35:13.608942+00:00",
+      "pressure_samples": {
+        "1": 185
+      },
+      "status": "completed",
+      "stop_reason": null,
+      "audit": {
+        "ttft_s": 171.81597825000063,
+        "total_s": 175.9451391249895,
+        "decode_tps": 17.194776892821146,
+        "prompt_tokens": 22817,
+        "generation_tokens": 72,
+        "text": "{\n  \"exception\": \"EngineBusy\",\n  \"counter\": 1,\n  \"status\": 503,\n  \"error\": \"text_generation_busy\",\n  \"environment\": \"VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION=fail_fast\",\n  \"wait_value\": 0,\n  \"retry_after\": false\n}",
+        "system_before": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640089088,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2097446912,
+          "pressure_level": 1,
+          "max_rss_bytes": 40697856
+        },
+        "system_after": {
+          "swap_used_bytes": 4201769861,
+          "swapin_bytes": 218640089088,
+          "swapout_bytes": 232032190464,
+          "compressed_bytes": 2090188800,
+          "pressure_level": 1,
+          "max_rss_bytes": 41418752
+        },
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact_answer": false,
+        "event": "audit",
+        "model": "mlx-community/Qwen3-8B-4bit",
+        "revision": "545dc4251c05440727734bcd94334791f6ab0192",
+        "size": "8B",
+        "mode": "quant8_layerwise",
+        "transport": "http",
+        "user_message_sha256": "e394d0567264bcb0999a55b9506ef25c239d22627f6b213e666057df539e2498",
+        "answer_text_sha256": "2142a6afb3ae48aae270f0fb475ca09012b012439e15164ee75a71a64aad9580"
+      },
+      "physical_peak_bytes": 8430178744,
+      "time_footer": [
+        "      182.31 real         4.88 user         3.53 sys",
+        "          5269946368  maximum resident set size",
+        "                   0  average shared memory size",
+        "                   0  average unshared data size",
+        "                   0  average unshared stack size",
+        "              348201  page reclaims",
+        "                  43  page faults",
+        "                   0  swaps",
+        "                   0  block input operations",
+        "                   0  block output operations",
+        "                 195  messages sent",
+        "                  84  messages received",
+        "                   1  signals received",
+        "                 933  voluntary context switches",
+        "               34466  involuntary context switches",
+        "         56595825992  instructions retired",
+        "         23018061096  cycles elapsed",
+        "          8430178744  peak memory footprint"
+      ],
+      "server_exit_after_requested_shutdown": -15,
+      "benchmark_commit": "fe6c12def668c7823c213e4bd76876bf9d94558e"
+    }
+  ],
+  "checks": {
+    "focused": {
+      "tests": 138,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 138,
+      "unsuccessful": {}
+    },
+    "candidate-full": {
+      "tests": 3943,
+      "failures": 14,
+      "errors": 3,
+      "skipped": 28,
+      "passed": 3898,
+      "unsuccessful": {
+        "tests.test_engine_core_stream_safety::test_engine_core_no_cross_thread_stream_error": "failure",
+        "tests.test_engine_core_thread_streams::test_engine_core_runs_all_scheduler_steps_on_one_worker_thread": "failure",
+        "tests.test_lifecycle_cli.TestLifecycleCli::test_serve_command_preserves_mtp_scheduler_config_with_residency": "failure",
+        "tests.test_lifecycle_cli.TestLifecycleCli::test_serve_command_describes_lazy_startup_without_claiming_model_is_loaded": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_valid_stdio_config": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_node_eval_in_config_rejected": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_encoded_path_traversal_in_config_rejected": "failure",
+        "tests.test_mcp_security.TestMCPConfigDiscovery::test_load_mcp_config_allows_explicit_path_in_cwd": "failure",
+        "tests.test_mcp_security.TestMCPConfigDiscovery::test_load_mcp_config_uses_user_config_directory": "failure",
+        "tests.test_memory_cache::test_save_load_roundtrip_through_provenance_subdir": "failure",
+        "tests.test_prefix_cache_scheduler_parity::test_arrays_cache_next_turn_matches_cold_when_coverage_is_unknown": "failure",
+        "tests.test_prefix_cache_scheduler_parity::test_identical_plain_kv_prompt_never_replays_a_supersequence": "failure",
+        "tests.test_scheduler_exact_cache_replay::test_real_batch_processors_see_the_same_history_after_replay[partial]": "failure",
+        "tests.test_scheduler_exact_cache_replay::test_real_batch_processors_see_the_same_history_after_replay[exact]": "failure",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_tokenizer_wrapper_has_optimized_detokenizer": "error",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_optimized_detokenizer_correctness": "error",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_scheduler_uses_optimized_detokenizer": "error"
+      }
+    },
+    "base-full": {
+      "tests": 3883,
+      "failures": 14,
+      "errors": 3,
+      "skipped": 28,
+      "passed": 3838,
+      "unsuccessful": {
+        "tests.test_engine_core_stream_safety::test_engine_core_no_cross_thread_stream_error": "failure",
+        "tests.test_engine_core_thread_streams::test_engine_core_runs_all_scheduler_steps_on_one_worker_thread": "failure",
+        "tests.test_lifecycle_cli.TestLifecycleCli::test_serve_command_preserves_mtp_scheduler_config_with_residency": "failure",
+        "tests.test_lifecycle_cli.TestLifecycleCli::test_serve_command_describes_lazy_startup_without_claiming_model_is_loaded": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_valid_stdio_config": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_node_eval_in_config_rejected": "failure",
+        "tests.test_mcp_security.TestMCPServerConfigSecurity::test_encoded_path_traversal_in_config_rejected": "failure",
+        "tests.test_mcp_security.TestMCPConfigDiscovery::test_load_mcp_config_allows_explicit_path_in_cwd": "failure",
+        "tests.test_mcp_security.TestMCPConfigDiscovery::test_load_mcp_config_uses_user_config_directory": "failure",
+        "tests.test_memory_cache::test_save_load_roundtrip_through_provenance_subdir": "failure",
+        "tests.test_prefix_cache_scheduler_parity::test_arrays_cache_next_turn_matches_cold_when_coverage_is_unknown": "failure",
+        "tests.test_prefix_cache_scheduler_parity::test_identical_plain_kv_prompt_never_replays_a_supersequence": "failure",
+        "tests.test_scheduler_exact_cache_replay::test_real_batch_processors_see_the_same_history_after_replay[partial]": "failure",
+        "tests.test_scheduler_exact_cache_replay::test_real_batch_processors_see_the_same_history_after_replay[exact]": "failure",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_tokenizer_wrapper_has_optimized_detokenizer": "error",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_optimized_detokenizer_correctness": "error",
+        "tests.test_streaming_detokenizer.TestOptimizedDetokenizer::test_scheduler_uses_optimized_detokenizer": "error"
+      }
+    },
+    "failure_ids_match": true,
+    "changed_python_files": [
+      "tests/test_lifecycle_server.py",
+      "tests/test_quantized_prefill.py",
+      "vllm_mlx/api/models.py",
+      "vllm_mlx/engine/simple.py",
+      "vllm_mlx/models/llm.py",
+      "vllm_mlx/quantized_prefill.py",
+      "vllm_mlx/server.py"
+    ],
+    "candidate-mypy": 719,
+    "base-mypy": 722,
+    "new_mypy_errors": [],
+    "mypy_comparison": "Compared diagnostics including file, message and count after normalizing line numbers at the call site and in the diagnostic text.",
+    "extra_cpu_diagnostic": {
+      "forced_cpu_on_metal_mac": {
+        "passed": 57,
+        "failed": 3,
+        "routine": "mlx_lm.generate.wired_limit",
+        "error": "'max_recommended_working_set_size'",
+        "reproduced_on_unchanged_base": true
+      },
+      "failed_tests": [
+        "test_request_decoder_is_isolated_on_close_and_error",
+        "test_single_token_prompt",
+        "test_chat_cancellation_releases_caches_and_restores_model"
+      ],
+      "simulated_cpu_only": {
+        "passed": 60,
+        "failed": 0,
+        "setup": "Set MLX's default device to CPU and mock mlx.metal.is_available() to return False for this diagnostic only."
+      },
+      "conclusion": "Upstream MLX-LM attempts to read a GPU-only field from the default CPU device when Metal is still reported available. The failure also occurs before ordinary full-KV generation. All 48 paired numerical cases passed on both devices."
+    }
+  }
+}
