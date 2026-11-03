@@ -58,6 +58,7 @@ class MLXLanguageModel:
         mtp: bool = False,
         mtp_num_draft_tokens: int = 1,
         model_id: str | None = None,
+        prefill_step_size: int = 2048,
     ):
         """
         Initialize the MLX language model.
@@ -71,6 +72,7 @@ class MLXLanguageModel:
             model_id: The model's identity when ``model_name`` is a resolved
                 local snapshot; name-based fixes key on it. Defaults to
                 ``model_name``.
+            prefill_step_size: Prompt chunk size within each layer for quantized prefill.
         """
         self.model_name = model_name
         self.model_id = model_id or model_name
@@ -78,6 +80,7 @@ class MLXLanguageModel:
         self.trust_remote_code = trust_remote_code
         self._mtp = mtp
         self._mtp_num_draft_tokens = mtp_num_draft_tokens
+        self._prefill_step_size = prefill_step_size
 
         self.model = None
         self.tokenizer = None
@@ -244,7 +247,9 @@ class MLXLanguageModel:
                 self.tokenizer.bos_token
             )
             prompt = self.tokenizer.encode(prompt, add_special_tokens=add_special)
-        model = layerwise_prefill_model(self.model, prompt, kv_cache_bits)
+        model = layerwise_prefill_model(
+            self.model, prompt, kv_cache_bits, self._prefill_step_size
+        )
         return model, prompt, {"prefill_step_size": len(prompt)}
 
     def stream_generate(

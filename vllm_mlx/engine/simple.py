@@ -809,6 +809,7 @@ class SimpleEngine(BaseEngine):
                 trust_remote_code=self._trust_remote_code,
                 mtp=self._mtp,
                 mtp_num_draft_tokens=self._mtp_num_draft_tokens,
+                prefill_step_size=self._prefill_step_size,
             )
 
         self._model.load()

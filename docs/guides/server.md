@@ -133,10 +133,20 @@ response = client.completions.create(
 )
 ```
 
-For fresh long text requests on dense Llama or Qwen3, both endpoints accept
-`extra_body={"kv_cache_bits": 4}` (or `8`) to lower the peak memory of dense
-prefill through layerwise KV quantization. This opt-in SimpleEngine path bypasses
-prefix reuse. See [measurements and restrictions](../benchmarks/quantized-prefill.md).
+### Quantized KV cache for long prompts
+
+On a single text request, pass `extra_body={"kv_cache_bits": 8}` to either
+completion endpoint. The alternative setting is `4`. Both settings preserve
+all prompt tokens. After each layer finishes reading the prompt, SimpleEngine
+converts that layer's KV cache to the requested precision. This reduces peak
+memory compared with waiting until all layers finish. The first token can take
+longer, and KV precision can affect the answer. `--prefill-step-size` controls
+how many prompt tokens are processed at a time within each layer.
+
+This option supports dense, full-attention Llama and Qwen3 models with head
+dimensions divisible by 64. It uses a fresh cache for each request, so repeated
+questions about the same document repeat prefill. Continuous batching,
+speculative decoding, SpecPrefill, and rotating caches are unsupported.
 
 ### Models
 

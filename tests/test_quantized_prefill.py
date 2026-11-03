@@ -8,7 +8,6 @@ import pytest
 pytest.importorskip("mlx.core")
 
 import mlx.core as mx
-import numpy as np
 from mlx.utils import tree_flatten
 from mlx_lm.generate import generate_step
 from mlx_lm.models import llama, qwen3
@@ -50,59 +49,49 @@ def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
     model.set_dtype(dtype)
     mx.eval(model.parameters())
     tokens = mx.array([(i * 7 + 3) % 128 for i in range(length)])
-    reference_cache = make_prompt_cache(model)
-    reference_histories = []
 
-    def reference_processor(history, logits):
-        reference_histories.append(history.tolist())
-        return logits
+    def run(model, step_size, **options):
+        cache = make_prompt_cache(model)
+        histories = []
 
-    reference = [
-        (t, np.array(p.astype(mx.float32)))
-        for t, p in generate_step(
-            tokens,
-            model,
-            max_tokens=4,
-            prompt_cache=reference_cache,
-            prefill_step_size=8,
-            kv_bits=bits,
-            quantized_kv_start=length,
-            logits_processors=[reference_processor],
+        def record_history(history, logits):
+            histories.append(history.tolist())
+            return logits
+
+        outputs = list(
+            generate_step(
+                tokens,
+                model,
+                max_tokens=4,
+                prompt_cache=cache,
+                prefill_step_size=step_size,
+                logits_processors=[record_history],
+                **options,
+            )
         )
-    ]
-    decoder = model.model
-    histories = []
+        return outputs, cache, histories
 
-    def processor(history, logits):
-        histories.append(history.tolist())
-        return logits
-
+    reference, reference_cache, reference_histories = run(
+        model, 8, kv_bits=bits, quantized_kv_start=length
+    )
     request_model = layerwise_prefill_model(model, tokens, bits, prefill_step_size=8)
-    cache = make_prompt_cache(request_model)
-    actual = [
-        (t, np.array(p.astype(mx.float32)))
-        for t, p in generate_step(
-            tokens,
-            request_model,
-            max_tokens=4,
-            prompt_cache=cache,
-            prefill_step_size=length,
-            logits_processors=[processor],
-        )
-    ]
-    assert [t for t, _ in actual] == [t for t, _ in reference]
-    for (_, a), (_, b) in zip(actual, reference):
-        np.testing.assert_array_equal(a, b)
+    assert request_model.layers[0] is model.layers[0]
+    actual, cache, histories = run(request_model, length)
     assert histories == reference_histories
-    for a, b in zip(cache, reference_cache):
+    for (token, logprobs), (expected, expected_logprobs) in zip(
+        actual, reference, strict=True
+    ):
+        assert token == expected
+        assert logprobs.dtype == expected_logprobs.dtype
+        assert mx.array_equal(logprobs, expected_logprobs).item()
+    for a, b in zip(cache, reference_cache, strict=True):
         assert isinstance(a, QuantizedKVCache)
         assert a.offset == b.offset == length + 4
-        first, second = tree_flatten(a.state), tree_flatten(b.state)
-        assert len(first) == len(second)
-        for (_, x), (_, y) in zip(first, second):
-            assert x.dtype == y.dtype
+        for (key, x), (other_key, y) in zip(
+            tree_flatten(a.state), tree_flatten(b.state), strict=True
+        ):
+            assert key == other_key and x.dtype == y.dtype
             assert mx.array_equal(x, y).item()
-    assert model.model is decoder
 
 
 @pytest.fixture
@@ -186,6 +175,21 @@ def test_single_token_prompt(tiny_wrapper):
     assert output[0].prompt_tokens == 1
 
 
+def test_engine_prefill_step_size_reaches_each_layer(tiny_wrapper, monkeypatch):
+    from vllm_mlx.engine.simple import SimpleEngine
+    from vllm_mlx.models.llm import MLXLanguageModel
+
+    monkeypatch.setattr("vllm_mlx.engine.simple.is_mllm_model", lambda _: False)
+    monkeypatch.setattr(
+        MLXLanguageModel, "load", lambda m: setattr(m, "model", tiny_wrapper.model)
+    )
+    engine = SimpleEngine("tiny-model", prefill_step_size=8)
+    engine.prepare_for_start()
+    model, _, options = engine._model._generation_inputs(list(range(17)), 8)
+    assert model.model.step_size == 8
+    assert options["prefill_step_size"] == 17
+
+
 @pytest.fixture
 def tiny_engine(tiny_wrapper, monkeypatch):
     from vllm_mlx.engine.simple import SimpleEngine
@@ -257,7 +261,7 @@ def test_unsupported_model_is_rejected():
         layerwise_prefill_model(object(), [1], bits=4)
 
 
-def test_http_options_and_unsupported_engine(tiny_engine):
+def test_http_options_and_media_validation(tiny_engine):
     from fastapi import HTTPException
     from pydantic import ValidationError
 
@@ -265,21 +269,19 @@ def test_http_options_and_unsupported_engine(tiny_engine):
         ChatCompletionRequest,
         CompletionRequest,
         _prepare_chat_completion_invocation,
-        _validate_kv_cache_bits_request,
     )
 
+    messages = [{"role": "user", "content": "1 2 3"}]
     for cls, payload in [
         (CompletionRequest, {"prompt": "1 2 3"}),
-        (ChatCompletionRequest, {"messages": [{"role": "user", "content": "1 2 3"}]}),
+        (ChatCompletionRequest, {"messages": messages}),
     ]:
         for invalid in (0, 1, 3, 5, 16, True, "4"):
             with pytest.raises(ValidationError):
                 cls(model="tiny-model", kv_cache_bits=invalid, **payload)
-        request = cls(model="tiny-model", kv_cache_bits=4, **payload)
-        _validate_kv_cache_bits_request(tiny_engine, request)
-        with pytest.raises(HTTPException) as exc:
-            _validate_kv_cache_bits_request(object(), request)
-        assert exc.value.status_code == 400
+    request = ChatCompletionRequest(
+        model="tiny-model", kv_cache_bits=4, messages=messages
+    )
     prepared = _prepare_chat_completion_invocation(tiny_engine, request, 4)
     assert prepared.chat_kwargs["kv_cache_bits"] == 4
     media_request = ChatCompletionRequest(
