@@ -8,7 +8,6 @@ integrating with vLLM's model execution system.
 
 import logging
 from collections.abc import Iterator
-from contextlib import nullcontext
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Union
 
@@ -204,20 +203,17 @@ class MLXLanguageModel:
         if logits_processors:
             all_processors = list(logits_processors) + all_processors
 
-        prompt, cache_context = self._prompt_cache_context(prompt, None, kv_cache_bits)
-        generation_kwargs = {"prefill_step_size": len(prompt)} if kv_cache_bits else {}
-        with cache_context as prompt_cache:
-            output_text = generate(
-                self.model,
-                self.tokenizer,
-                prompt=prompt,
-                max_tokens=max_tokens,
-                sampler=sampler,
-                logits_processors=all_processors if all_processors else None,
-                prompt_cache=prompt_cache,
-                verbose=False,
-                **generation_kwargs,
-            )
+        model, prompt, cache_kwargs = self._generation_inputs(prompt, kv_cache_bits)
+        output_text = generate(
+            model,
+            self.tokenizer,
+            prompt=prompt,
+            max_tokens=max_tokens,
+            sampler=sampler,
+            logits_processors=all_processors if all_processors else None,
+            verbose=False,
+            **cache_kwargs,
+        )
 
         # Tokenize output to get token IDs
         tokens = self.tokenizer.encode(output_text)
@@ -231,21 +227,25 @@ class MLXLanguageModel:
             finish_reason=finish_reason,
         )
 
-    def _prompt_cache_context(self, prompt, prompt_cache, kv_cache_bits):
+    def _generation_inputs(self, prompt, kv_cache_bits, prompt_cache=None):
         if kv_cache_bits is None:
-            return prompt, nullcontext(prompt_cache)
+            cache_kwargs = (
+                {} if prompt_cache is None else {"prompt_cache": prompt_cache}
+            )
+            return self.model, prompt, cache_kwargs
         if self._mtp or prompt_cache is not None:
             raise ValueError(
                 "Layerwise KV quantization requires a fresh prompt without speculative decoding"
             )
-        from ..quantized_prefill import quantized_prompt_cache
+        from ..quantized_prefill import layerwise_prefill_model
 
         if isinstance(prompt, str):
             add_special = self.tokenizer.bos_token is None or not prompt.startswith(
                 self.tokenizer.bos_token
             )
             prompt = self.tokenizer.encode(prompt, add_special_tokens=add_special)
-        return prompt, quantized_prompt_cache(self.model, prompt, kv_cache_bits)
+        model = layerwise_prefill_model(self.model, prompt, kv_cache_bits)
+        return model, prompt, {"prefill_step_size": len(prompt)}
 
     def stream_generate(
         self,
@@ -297,6 +297,12 @@ class MLXLanguageModel:
         if penalty_processors or logits_processors:
             all_processors = (logits_processors or []) + (penalty_processors or [])
 
+        model, prompt, generation_kwargs = self._generation_inputs(
+            prompt, kv_cache_bits, prompt_cache
+        )
+        if self._mtp:
+            generation_kwargs["num_draft_tokens"] = self._mtp_num_draft_tokens
+
         # Count prompt tokens once upfront
         if isinstance(prompt, str):
             num_prompt_tokens = len(self.tokenizer.encode(prompt))
@@ -307,59 +313,47 @@ class MLXLanguageModel:
         max_stop_len = max((len(s) for s in stop_list), default=0)
         accumulated_tail = ""
 
-        prompt, cache_context = self._prompt_cache_context(
-            prompt, prompt_cache, kv_cache_bits
-        )
-        with cache_context as prompt_cache:
-            mtp_kwargs = {}
-            if kv_cache_bits:
-                mtp_kwargs["prefill_step_size"] = len(prompt)
-            if self._mtp:
-                mtp_kwargs["num_draft_tokens"] = self._mtp_num_draft_tokens
-            if prompt_cache is not None:
-                mtp_kwargs["prompt_cache"] = prompt_cache
+        for token_count, response in enumerate(
+            stream_generate(
+                model,
+                self.tokenizer,
+                prompt=prompt,
+                max_tokens=max_tokens,
+                sampler=sampler,
+                logits_processors=all_processors,
+                **generation_kwargs,
+            ),
+            start=1,
+        ):
+            # response.text is the new token text (not accumulated)
+            new_text = response.text
 
-            for token_count, response in enumerate(
-                stream_generate(
-                    self.model,
-                    self.tokenizer,
-                    prompt=prompt,
-                    max_tokens=max_tokens,
-                    sampler=sampler,
-                    logits_processors=all_processors,
-                    **mtp_kwargs,
-                ),
-                start=1,
-            ):
-                # response.text is the new token text (not accumulated)
-                new_text = response.text
+            # Check for stop sequences against a bounded tail rather than
+            # accumulating the full response (which is O(n^2) over the loop).
+            should_stop = False
+            if max_stop_len > 0:
+                combined = accumulated_tail + new_text
+                for stop_seq in stop_list:
+                    if stop_seq in combined:
+                        should_stop = True
+                        break
+                accumulated_tail = combined[-max_stop_len:]
 
-                # Check for stop sequences against a bounded tail rather than
-                # accumulating the full response (which is O(n^2) over the loop).
-                should_stop = False
-                if max_stop_len > 0:
-                    combined = accumulated_tail + new_text
-                    for stop_seq in stop_list:
-                        if stop_seq in combined:
-                            should_stop = True
-                            break
-                    accumulated_tail = combined[-max_stop_len:]
+            finished = should_stop or token_count >= max_tokens
+            finish_reason = None
+            if finished:
+                finish_reason = "stop" if should_stop else "length"
 
-                finished = should_stop or token_count >= max_tokens
-                finish_reason = None
-                if finished:
-                    finish_reason = "stop" if should_stop else "length"
+            yield StreamingOutput(
+                text=new_text,
+                token=response.token if hasattr(response, "token") else 0,
+                finished=finished,
+                finish_reason=finish_reason,
+                prompt_tokens=num_prompt_tokens,
+            )
 
-                yield StreamingOutput(
-                    text=new_text,
-                    token=response.token if hasattr(response, "token") else 0,
-                    finished=finished,
-                    finish_reason=finish_reason,
-                    prompt_tokens=num_prompt_tokens,
-                )
-
-                if finished:
-                    break
+            if finished:
+                break
 
     def chat(
         self,

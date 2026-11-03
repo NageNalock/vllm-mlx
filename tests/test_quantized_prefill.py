@@ -15,7 +15,7 @@ from mlx_lm.models import llama, qwen3
 from mlx_lm.models.cache import KVCache, QuantizedKVCache, make_prompt_cache
 from mlx_lm.models.llama import Model, ModelArgs
 
-from vllm_mlx.quantized_prefill import _LayerwiseDecoder, quantized_prompt_cache
+from vllm_mlx.quantized_prefill import layerwise_prefill_model
 
 
 @pytest.fixture(autouse=True)
@@ -77,30 +77,31 @@ def test_exact_deferred_quantization_parity(model_module, dtype, length, bits):
         histories.append(history.tolist())
         return logits
 
-    with quantized_prompt_cache(model, tokens, bits, prefill_step_size=8) as cache:
-        actual = [
-            (t, np.array(p.astype(mx.float32)))
-            for t, p in generate_step(
-                tokens,
-                model,
-                max_tokens=4,
-                prompt_cache=cache,
-                prefill_step_size=length,
-                logits_processors=[processor],
-            )
-        ]
-        assert [t for t, _ in actual] == [t for t, _ in reference]
-        for (_, a), (_, b) in zip(actual, reference):
-            np.testing.assert_array_equal(a, b)
-        assert histories == reference_histories
-        for a, b in zip(cache, reference_cache):
-            assert isinstance(a, QuantizedKVCache)
-            assert a.offset == b.offset == length + 4
-            first, second = tree_flatten(a.state), tree_flatten(b.state)
-            assert len(first) == len(second)
-            for (_, x), (_, y) in zip(first, second):
-                assert x.dtype == y.dtype
-                assert mx.array_equal(x, y).item()
+    request_model = layerwise_prefill_model(model, tokens, bits, prefill_step_size=8)
+    cache = make_prompt_cache(request_model)
+    actual = [
+        (t, np.array(p.astype(mx.float32)))
+        for t, p in generate_step(
+            tokens,
+            request_model,
+            max_tokens=4,
+            prompt_cache=cache,
+            prefill_step_size=length,
+            logits_processors=[processor],
+        )
+    ]
+    assert [t for t, _ in actual] == [t for t, _ in reference]
+    for (_, a), (_, b) in zip(actual, reference):
+        np.testing.assert_array_equal(a, b)
+    assert histories == reference_histories
+    for a, b in zip(cache, reference_cache):
+        assert isinstance(a, QuantizedKVCache)
+        assert a.offset == b.offset == length + 4
+        first, second = tree_flatten(a.state), tree_flatten(b.state)
+        assert len(first) == len(second)
+        for (_, x), (_, y) in zip(first, second):
+            assert x.dtype == y.dtype
+            assert mx.array_equal(x, y).item()
     assert model.model is decoder
 
 
@@ -139,27 +140,20 @@ def tiny_wrapper():
     return wrapper
 
 
-def test_wrapper_restores_attention_on_close_error_and_next_request(tiny_wrapper):
+def test_request_decoder_is_isolated_on_close_and_error(tiny_wrapper):
     model = tiny_wrapper.model
     decoder = model.model
-    originals = [layer.self_attn for layer in model.layers]
     prompt = " ".join(str(i % 127 + 1) for i in range(160))
     baseline = list(tiny_wrapper.stream_generate(prompt, max_tokens=3, temperature=0))
     stream = tiny_wrapper.stream_generate(
         prompt, max_tokens=20, temperature=0, kv_cache_bits=4
     )
     next(stream)
-    assert isinstance(model.model, _LayerwiseDecoder)
-    assert all(
-        layer.self_attn is original for layer, original in zip(model.layers, originals)
-    )
-    stream.close()
     assert model.model is decoder
-    assert all(
-        layer.self_attn is original for layer, original in zip(model.layers, originals)
-    )
-    restored = list(tiny_wrapper.stream_generate(prompt, max_tokens=3, temperature=0))
-    assert [c.token for c in restored] == [c.token for c in baseline]
+    # A normal request can use the same weights while the quantized stream is open.
+    ordinary = list(tiny_wrapper.stream_generate(prompt, max_tokens=3, temperature=0))
+    assert [c.token for c in ordinary] == [c.token for c in baseline]
+    stream.close()
 
     def fail(tokens, logits):
         raise RuntimeError("processor failed")
@@ -171,9 +165,6 @@ def test_wrapper_restores_attention_on_close_error_and_next_request(tiny_wrapper
             )
         )
     assert model.model is decoder
-    assert all(
-        layer.self_attn is original for layer, original in zip(model.layers, originals)
-    )
     streamed = list(
         tiny_wrapper.stream_generate(
             prompt, max_tokens=3, temperature=0, kv_cache_bits=4
@@ -223,7 +214,6 @@ async def test_chat_cancellation_releases_caches_and_restores_model(
     monkeypatch.setattr(KVCache, "to_quantized", capture)
     model = tiny_engine._model.model
     decoder = model.model
-    originals = [layer.self_attn for layer in model.layers]
     messages = [
         {"role": "system", "content": "1 2 3"},
         {"role": "user", "content": " ".join(str(i % 127 + 1) for i in range(160))},
@@ -239,10 +229,6 @@ async def test_chat_cancellation_releases_caches_and_restores_model(
         gc.collect()
         assert model.model is decoder
         assert all(r() is None for r in refs)
-        assert all(
-            layer.self_attn is original
-            for layer, original in zip(model.layers, originals)
-        )
         assert not tiny_engine._system_kv_cache
         assert tiny_engine._prefix_trie_cache is None
         output = await tiny_engine.chat(
@@ -268,8 +254,7 @@ def test_incompatible_engine_features_are_rejected(tiny_engine, setting):
 
 def test_unsupported_model_is_rejected():
     with pytest.raises(ValueError, match="dense Llama and Qwen3"):
-        with quantized_prompt_cache(object(), [1], bits=4):
-            pass
+        layerwise_prefill_model(object(), [1], bits=4)
 
 
 def test_http_options_and_unsupported_engine(tiny_engine):
@@ -297,6 +282,24 @@ def test_http_options_and_unsupported_engine(tiny_engine):
         assert exc.value.status_code == 400
     prepared = _prepare_chat_completion_invocation(tiny_engine, request, 4)
     assert prepared.chat_kwargs["kv_cache_bits"] == 4
+    media_request = ChatCompletionRequest(
+        model="tiny-model",
+        kv_cache_bits=4,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": "data:image/png;base64,AA=="},
+                    }
+                ],
+            }
+        ],
+    )
+    with pytest.raises(HTTPException, match="text-only") as exc:
+        _prepare_chat_completion_invocation(tiny_engine, media_request, 4)
+    assert exc.value.status_code == 400
 
 
 @pytest.mark.anyio

@@ -1357,12 +1357,14 @@ class SimpleEngine(BaseEngine):
             async for output in tracked_stream:
                 yield output
 
-    def validate_quantized_prefill(self, specprefill: bool | None = None) -> None:
-        """Validate an opt-in Layerwise KV quantization request before entering a generation path."""
+    def validate_quantized_prefill(
+        self, specprefill: bool | None = None, *, has_media: bool = False
+    ) -> None:
         from ..quantized_prefill import validate_quantized_prefill_model
 
         if (
-            self._is_mllm
+            has_media
+            or self._is_mllm
             or self._mtp
             or self._max_kv_size > 0
             or specprefill is True
@@ -1812,14 +1814,13 @@ class SimpleEngine(BaseEngine):
         if not self._loaded:
             await self.start()
 
-        if kwargs.get("kv_cache_bits"):
-            self.validate_quantized_prefill(kwargs.get("specprefill"))
-
         chat_template_kwargs = dict(kwargs.pop("chat_template_kwargs", {}) or {})
         mllm_draft_requested = bool(kwargs.pop("mllm_draft", self._default_mllm_draft))
         has_media = has_media_content(messages)
-        if kwargs.get("kv_cache_bits") and has_media:
-            raise ValueError("Layerwise KV quantization requires text-only requests")
+        if kwargs.get("kv_cache_bits"):
+            self.validate_quantized_prefill(
+                kwargs.get("specprefill"), has_media=has_media
+            )
 
         await self._ensure_text_model_for_request(
             mllm_draft_requested=mllm_draft_requested

@@ -872,7 +872,10 @@ def _attach_logit_bias_processor(
 
 
 def _validate_kv_cache_bits_request(
-    engine: BaseEngine, request: ChatCompletionRequest | CompletionRequest
+    engine: BaseEngine,
+    request: ChatCompletionRequest | CompletionRequest,
+    *,
+    has_media: bool = False,
 ) -> None:
     if not request.kv_cache_bits:
         return
@@ -881,7 +884,7 @@ def _validate_kv_cache_bits_request(
             400, "Layerwise KV quantization requires text-only SimpleEngine"
         )
     try:
-        engine.validate_quantized_prefill(request.specprefill)
+        engine.validate_quantized_prefill(request.specprefill, has_media=has_media)
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
 
@@ -892,14 +895,10 @@ def _prepare_chat_completion_invocation(
     effective_max_tokens: int,
 ) -> PreparedChatInvocation:
     """Precompute messages, kwargs, and decoding constraints for chat completions."""
-    _validate_kv_cache_bits_request(engine, request)
     messages, images, videos, audios, has_media = _prepare_chat_messages(
         engine, request.messages
     )
-    if request.kv_cache_bits and has_media:
-        raise HTTPException(
-            400, "Layerwise KV quantization requires text-only requests"
-        )
+    _validate_kv_cache_bits_request(engine, request, has_media=has_media)
     response_format = request.response_format
     messages, json_logits_processor = _prepare_json_logits_processor(
         engine,

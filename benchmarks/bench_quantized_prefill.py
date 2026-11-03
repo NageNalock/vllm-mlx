@@ -3,7 +3,6 @@
 
 import argparse
 import gc
-from contextlib import nullcontext
 import hashlib
 import json
 import time
@@ -21,7 +20,7 @@ from mlx_lm import load
 from mlx_lm.generate import generate_step
 from mlx_lm.models.cache import make_prompt_cache
 from mlx_lm.models import base
-from vllm_mlx.quantized_prefill import quantized_prompt_cache
+from vllm_mlx.quantized_prefill import layerwise_prefill_model
 
 MODEL = "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
 MODEL_REVISION = "241a666dad6cb93c8ff213d39a7f34a36bf26db4"
@@ -52,18 +51,15 @@ def emit(record):
 
 def measure(model, tokenizer, tokens, mode, args, max_tokens, stop_at_eos):
     bits = 4 if mode.startswith("quant4") else 8 if mode.startswith("quant8") else None
-    context = (
-        quantized_prompt_cache(
+    if mode.endswith("_layerwise"):
+        model = layerwise_prefill_model(
             model, tokens, bits, prefill_step_size=args.prefill_step_size
         )
-        if mode.endswith("_layerwise")
-        else nullcontext(make_prompt_cache(model))
+    cache = make_prompt_cache(model)
+    result, first = measure_cache(
+        model, tokenizer, tokens, mode, args, max_tokens, stop_at_eos, cache
     )
-    with context as cache:
-        result, first = measure_cache(
-            model, tokenizer, tokens, mode, args, max_tokens, stop_at_eos, cache
-        )
-    del cache, context
+    del cache, model
     gc.collect()
     mx.synchronize()
     mx.clear_cache()

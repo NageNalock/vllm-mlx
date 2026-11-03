@@ -2,11 +2,10 @@
 
 """Dense prefill with layerwise conversion to MLX's native quantized KV cache."""
 
-from contextlib import contextmanager
+from copy import copy
 
 import mlx.core as mx
 import mlx.nn as nn
-from mlx_lm.models.cache import make_prompt_cache
 
 
 def validate_quantized_prefill_model(model):
@@ -35,7 +34,6 @@ class _LayerwiseDecoder(nn.Module):
         self.tokens = tokens
         self.bits = bits
         self.step_size = step_size
-        self.prefilled = False
         self.pending_output = None
 
     @property
@@ -47,14 +45,14 @@ class _LayerwiseDecoder(nn.Module):
         return self.original.embed_tokens
 
     def __call__(self, inputs, cache=None, input_embeddings=None):
-        if input_embeddings is not None or inputs.shape[0] != 1:
-            raise ValueError("Layerwise KV quantization requires a single text request")
         if self.pending_output is not None:
             output = self.pending_output
             self.pending_output = None
             return output
-        if self.prefilled:
+        if self.tokens is None:
             return self.original(inputs, cache, input_embeddings)
+        if input_embeddings is not None or inputs.shape[0] != 1:
+            raise ValueError("Layerwise KV quantization requires a single text request")
         length = len(self.tokens)
         if inputs.shape[1] not in (length - 1, length):
             raise ValueError(
@@ -85,7 +83,6 @@ class _LayerwiseDecoder(nn.Module):
             mx.clear_cache()
         output = self.original.norm(h[:, -1:])
         mx.eval(output)
-        self.prefilled = True
         self.tokens = None
         if inputs.shape[1] == length - 1:
             # MLX-LM samples from a separate call for the final prompt token.
@@ -93,13 +90,10 @@ class _LayerwiseDecoder(nn.Module):
         return output
 
 
-@contextmanager
-def quantized_prompt_cache(model, prompt, bits, prefill_step_size=2048):
-    """Prefill densely, quantizing each layer only after its last prompt query.
+def layerwise_prefill_model(model, prompt, bits, prefill_step_size=2048):
+    """Share the weights, keeping the prefill decoder local to this request.
 
-    Use a fresh prompt and outer prefill_step_size=len(prompt). Access to the
-    model must be serialized while this context is active, as in SimpleEngine.
-    Decoding uses the original model and MLX's native QuantizedKVCache.
+    Pass the full prompt to MLX-LM with outer prefill_step_size=len(prompt).
     """
     validate_quantized_prefill_model(model)
     if bits not in (4, 8):
@@ -108,10 +102,8 @@ def quantized_prompt_cache(model, prompt, bits, prefill_step_size=2048):
         raise ValueError(
             "Layerwise KV quantization requires a non-empty prompt and positive prefill_step_size"
         )
-    caches = make_prompt_cache(model)
-    decoder = model.model
-    try:
-        model.model = _LayerwiseDecoder(decoder, prompt, bits, prefill_step_size)
-        yield caches
-    finally:
-        model.model = decoder
+    request_model = copy(model)
+    request_model.model = _LayerwiseDecoder(
+        model.model, prompt, bits, prefill_step_size
+    )
+    return request_model
