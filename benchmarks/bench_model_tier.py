@@ -57,7 +57,10 @@ def grade(text, expected):
 def http_measure(url, mode, prompt):
     import httpx
 
-    options = {"kv_cache_bits": 4} if mode == "quant4_layerwise" else {}
+    options = {
+        "quant4_layerwise": {"kv_cache_bits": 4},
+        "quant8_layerwise": {"kv_cache_bits": 8},
+    }.get(mode, {})
     body = dict(
         model="model-tier",
         enable_thinking=False,
@@ -142,10 +145,22 @@ def direct_measure(repo, revision, prompt, args):
 
 
 def main():
+    protocol = json.loads(PROTOCOL.read_text())
+    addendum = json.loads(PROTOCOL.with_name("precision-addendum.json").read_text())
+    models = protocol["models"] | addendum["models"]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("size", choices=("4B", "8B"))
+    parser.add_argument("size", choices=models)
     parser.add_argument(
-        "mode", choices=("full", "quant4", "quant4_deferred", "quant4_layerwise")
+        "mode",
+        choices=(
+            "full",
+            "quant4",
+            "quant4_deferred",
+            "quant4_layerwise",
+            "quant8",
+            "quant8_deferred",
+            "quant8_layerwise",
+        ),
     )
     parser.add_argument("--prefill-step-size", type=int, default=2048)
     parser.add_argument("--quantized-kv-start", type=int, default=5000)
@@ -153,11 +168,10 @@ def main():
         "--url", help="Base URL of a fresh server with --served-model-name model-tier"
     )
     args = parser.parse_args()
-    protocol = json.loads(PROTOCOL.read_text())
     prompt = messages(protocol)
-    repo, revision = protocol["models"][args.size]
+    repo, revision = models[args.size]
     if args.url:
-        if args.mode not in ("full", "quant4_layerwise"):
+        if args.mode not in ("full", "quant4_layerwise", "quant8_layerwise"):
             parser.error("Use the direct harness for MLX-LM quantization controls")
         result = http_measure(args.url, args.mode, prompt)
     else:
