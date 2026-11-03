@@ -133,7 +133,12 @@ def direct_measure(repo, revision, prompt, args):
     from bench_quantized_prefill import fused_quantized_baseline, measure
 
     base.quantized_scaled_dot_product_attention = fused_quantized_baseline
-    snapshot = snapshot_download(repo, revision=revision, local_files_only=True)
+    snapshot = snapshot_download(
+        repo,
+        revision=revision,
+        local_files_only=True,
+        allow_patterns=["*.json", "*.safetensors"],
+    )
     model, tokenizer = load(snapshot)
     warmup = tokenizer.encode("This is a warmup for a long document analysis. " * 32)
     measure(model, tokenizer, warmup, args.mode, args, 8, False)

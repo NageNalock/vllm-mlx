@@ -42,8 +42,17 @@ The native implementation is frozen at `8f0b640`. The main report is
   `qwen32b-deferred-32k.stderr.txt` preserves the stopped run's stderr; no final
   physical-peak footer was available. Its tokenizer warning refers to the source
   pool before truncation, not an inference input longer than 32,768 tokens.
+- [Code-audit protocol](model-tier/protocol.json) records the original Qwen3
+  4B-to-8B comparison, source excerpts, answer key and pass criteria. The
+  [precision follow-up](model-tier/precision-addendum.json) records the 8-bit
+  and 14B checks added after the first 4-bit answer regression.
+- [Code-audit results](model-tier/summary.json) links model hashes, practical
+  thresholds and alternative configurations to [individual runs](model-tier/runs.jsonl).
+  Each completed run includes its full answer, field scores, latency, throughput
+  and the measured process's `/usr/bin/time -l` footer.
 
-Performance outputs use fixed lengths and ignore EOS; quality outputs stop at
-EOS. QA word F1 and code first-line similarity are not interchangeable with
+The 32K timing runs ignore EOS for fixed output lengths. The source-code audit
+and the paired quality runs stop at EOS. QA word F1 and code first-line
+similarity are not interchangeable with
 accuracy or functional code correctness. Physical process peak includes loading
 and warmup and differs from MLX active allocation and resident KV bytes.

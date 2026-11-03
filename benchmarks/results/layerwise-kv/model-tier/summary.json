@@ -1,0 +1,778 @@
+{
+  "registered_commit": "3fe6917",
+  "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+  "feature_commit": "8f0b640",
+  "dataset": "one pinned source-code audit",
+  "measured_at_utc": "2026-11-03T06:45:00.342564+00:00",
+  "hardware": "Apple M1 Pro, 32 GiB unified memory",
+  "assets": {
+    "4B": {
+      "repo": "mlx-community/Qwen3-4B-4bit",
+      "revision": "4dcb3d101c2a062e5c1d4bb173588c54ea6c4d25",
+      "weight_bytes": 2263022529,
+      "weight_sha256": "e240c0bdc0ebb0681bf0da0f98d9719fd6ebe269a3633f81542c13e81345651d",
+      "quantization": {
+        "group_size": 64,
+        "bits": 4
+      },
+      "num_layers": 36,
+      "kv_heads": 8,
+      "head_dim": 128,
+      "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    "8B": {
+      "repo": "mlx-community/Qwen3-8B-4bit",
+      "revision": "545dc4251c05440727734bcd94334791f6ab0192",
+      "weight_bytes": 4607835174,
+      "weight_sha256": "f2d29621aab300336ad645567ff38c42aac755513006ef4e8a579cf7ef5256d8",
+      "quantization": {
+        "group_size": 64,
+        "bits": 4
+      },
+      "num_layers": 36,
+      "kv_heads": 8,
+      "head_dim": 128,
+      "tokenizer_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    "14B": {
+      "repo": "mlx-community/Qwen3-14B-4bit",
+      "revision": "a4d9b2df59d2c150bef02fcbe0d91046b7ca33a4",
+      "files": [
+        {
+          "name": "model-00001-of-00002.safetensors",
+          "sha256": "5795efcfc7c96fd273e600562e8b111bfcc427415de9001d0a07e70cd99cff19",
+          "bytes": 5354381380
+        },
+        {
+          "name": "model-00002-of-00002.safetensors",
+          "sha256": "2814562d654fe2d541fd4682804a0ccaa400e79701872c8e9f5998cf9481fdf8",
+          "bytes": 2953517134
+        }
+      ],
+      "weight_bytes": 8307898514,
+      "quantization": {
+        "group_size": 64,
+        "bits": 4
+      },
+      "num_layers": 40,
+      "kv_heads": 8,
+      "head_dim": 128,
+      "tokens": 22817
+    }
+  },
+  "raw": "runs.jsonl",
+  "observations": {
+    "a": {
+      "peak_gib": 9.07745636254549,
+      "ttft_s": 112.41752587497467,
+      "decode_tps": 24.98544225063756,
+      "total_s": 115.09908737498336,
+      "answer_tokens": 68,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 123
+      }
+    },
+    "b": {
+      "peak_gib": 11.221668742597103,
+      "ttft_s": 164.94297912501497,
+      "decode_tps": 19.156642741933645,
+      "total_s": 168.6492652919842,
+      "answer_tokens": 72,
+      "input_tokens": 22817,
+      "correct": 4,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 178
+      }
+    },
+    "c": {
+      "peak_gib": 7.05225034058094,
+      "ttft_s": 171.00245791702764,
+      "decode_tps": 18.174461014731737,
+      "total_s": 175.1291277499986,
+      "answer_tokens": 76,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 187
+      }
+    },
+    "d": {
+      "peak_gib": 7.047535374760628,
+      "ttft_s": 170.70882804197026,
+      "decode_tps": 17.58882532685195,
+      "total_s": 174.9728990419535,
+      "answer_tokens": 76,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 184
+      }
+    },
+    "e": {
+      "peak_gib": 11.218113467097282,
+      "ttft_s": 165.03122591698775,
+      "decode_tps": 19.460301430457314,
+      "total_s": 168.67967916699126,
+      "answer_tokens": 72,
+      "input_tokens": 22817,
+      "correct": 4,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 178
+      }
+    },
+    "f": {
+      "peak_gib": 9.077624209225178,
+      "ttft_s": 112.55083108297549,
+      "decode_tps": 25.11447115015723,
+      "total_s": 115.21861570799956,
+      "answer_tokens": 68,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 126
+      }
+    },
+    "g": {
+      "peak_gib": 8.936083748936653,
+      "ttft_s": 112.72018462501,
+      "decode_tps": 25.04651393802344,
+      "total_s": 115.35528187500313,
+      "answer_tokens": 67,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 60
+      }
+    },
+    "h": {
+      "peak_gib": 8.836901642382145,
+      "ttft_s": 120.6895755410078,
+      "decode_tps": 24.832386119601164,
+      "total_s": 124.43468483304605,
+      "answer_tokens": 94,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 64
+      }
+    },
+    "i": {
+      "peak_gib": 8.939730621874332,
+      "ttft_s": 112.4966272090096,
+      "decode_tps": 23.18547905048795,
+      "total_s": 116.8096715839929,
+      "answer_tokens": 101,
+      "input_tokens": 22817,
+      "correct": 0,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 61
+      }
+    },
+    "j": {
+      "peak_gib": 8.840319611132145,
+      "ttft_s": 121.33619249996264,
+      "decode_tps": 22.509316154964413,
+      "total_s": 124.75699833297404,
+      "answer_tokens": 78,
+      "input_tokens": 22817,
+      "correct": 0,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 65
+      }
+    },
+    "k": {
+      "peak_gib": 5.968966484069824,
+      "ttft_s": 115.96191320801154,
+      "decode_tps": 23.628757242588975,
+      "total_s": 121.33671979204519,
+      "answer_tokens": 128,
+      "input_tokens": 22817,
+      "correct": 0,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 63
+      }
+    },
+    "l": {
+      "peak_gib": 11.07608463615179,
+      "ttft_s": 165.8204356249771,
+      "decode_tps": 18.88607543627,
+      "total_s": 169.52687004202744,
+      "answer_tokens": 71,
+      "input_tokens": 22817,
+      "correct": 4,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 88
+      }
+    },
+    "m": {
+      "peak_gib": 11.076374553143978,
+      "ttft_s": 165.9074118330027,
+      "decode_tps": 17.86128832680795,
+      "total_s": 170.05045004200656,
+      "answer_tokens": 75,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 89
+      }
+    },
+    "n": {
+      "peak_gib": 6.953205429017544,
+      "ttft_s": 171.54577354097273,
+      "decode_tps": 18.03749477057626,
+      "total_s": 175.64833883295069,
+      "answer_tokens": 75,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 91
+      }
+    },
+    "o": {
+      "peak_gib": 7.77736334502697,
+      "ttft_s": 169.42659891600488,
+      "decode_tps": 18.10027520436276,
+      "total_s": 173.34919120802078,
+      "answer_tokens": 72,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 89
+      }
+    },
+    "p": {
+      "peak_gib": 11.03523688018322,
+      "ttft_s": 174.5277391669806,
+      "decode_tps": 18.190686141153932,
+      "total_s": 178.37586229201406,
+      "answer_tokens": 71,
+      "input_tokens": 22817,
+      "correct": 2,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 92
+      }
+    },
+    "q": {
+      "peak_gib": 7.021351337432861,
+      "ttft_s": 201.08286887500435,
+      "decode_tps": 18.327003075002583,
+      "total_s": 204.6295480420231,
+      "answer_tokens": 66,
+      "input_tokens": 22817,
+      "correct": 1,
+      "strict_exact": false,
+      "system_swap_out_delta_gib": 0.0,
+      "pressure_counts": {
+        "1": 105
+      }
+    }
+  },
+  "modes": {
+    "a": [
+      "http",
+      "4B",
+      "full",
+      2048,
+      5000
+    ],
+    "b": [
+      "http",
+      "8B",
+      "full",
+      2048,
+      5000
+    ],
+    "c": [
+      "http",
+      "8B",
+      "quant4_layerwise",
+      2048,
+      5000
+    ],
+    "d": [
+      "http",
+      "8B",
+      "quant4_layerwise",
+      2048,
+      5000
+    ],
+    "e": [
+      "http",
+      "8B",
+      "full",
+      2048,
+      5000
+    ],
+    "f": [
+      "http",
+      "4B",
+      "full",
+      2048,
+      5000
+    ],
+    "g": [
+      "direct",
+      "4B",
+      "full",
+      2048,
+      5000
+    ],
+    "h": [
+      "direct",
+      "4B",
+      "full",
+      128,
+      5000
+    ],
+    "i": [
+      "direct",
+      "4B",
+      "quant4_deferred",
+      2048,
+      5000
+    ],
+    "j": [
+      "direct",
+      "4B",
+      "quant4_deferred",
+      128,
+      5000
+    ],
+    "k": [
+      "direct",
+      "4B",
+      "quant4",
+      2048,
+      5000
+    ],
+    "l": [
+      "direct",
+      "8B",
+      "full",
+      2048,
+      5000
+    ],
+    "m": [
+      "direct",
+      "8B",
+      "quant4_deferred",
+      2048,
+      5000
+    ],
+    "n": [
+      "direct",
+      "8B",
+      "quant4_layerwise",
+      2048,
+      5000
+    ],
+    "o": [
+      "direct",
+      "8B",
+      "quant4",
+      2048,
+      5000
+    ],
+    "p": [
+      "direct",
+      "8B",
+      "quant4_deferred",
+      128,
+      5000
+    ],
+    "q": [
+      "direct",
+      "8B",
+      "quant4",
+      128,
+      0
+    ]
+  },
+  "server_gate": {
+    "reference_min_4b_default_peak_gib": 9.07745636254549,
+    "max_8b_layerwise_peak_gib": 7.05225034058094,
+    "both_larger_default_above_reference": true,
+    "peak_margin_gib": 2.02520602196455,
+    "both_new_usable": false,
+    "both_4b_reference_usable": false,
+    "new_meets_every_primary_limit": false,
+    "8b_default_and_layerwise_identical_answer_text": false
+  },
+  "direct_checks": {
+    "four_b_default_reference_gib": 8.936083748936653,
+    "smaller_of_4b_deferred_peaks_gib": 8.840319611132145,
+    "8b_layerwise_within_both_4b_deferred_controls": true,
+    "8b_deferred_exceeds_reference": {
+      "m": true,
+      "p": true
+    },
+    "8b_layerwise_vs_8b_deferred": {
+      "prompt_sha256": true,
+      "output_sha256": true,
+      "first_logprobs_sha256": true,
+      "kv_bytes_first": true,
+      "kv_bytes_end": true
+    },
+    "alternatives_meeting_4b_default_direct_reference_and_usable": [],
+    "reference_scope": "All comparisons within this section use direct-process footers, not HTTP server peaks."
+  },
+  "measurement_notes": [
+    "Two fresh servers per primary configuration, with the pre-registered reverse order. Times are descriptive; initial warmup/model load excluded from request timing, included in lifetime peak.",
+    "HTTP decode is (server-reported completion tokens minus one) divided by elapsed time between first nonempty content and [DONE]. Direct timing uses the existing generate_step harness. Compare peaks within the same transport.",
+    "Output length stops at EOS under a common 128-token maximum. Model size/answer quality beyond this one incident are not established.",
+    "Swap and pressure observations are system-wide. The max_rss_bytes field in HTTP system snapshots describes the observing client; the physical peak used for every server comparison comes exclusively from the server process time footer.",
+    "A start value stored with a run is used only by an early-quantization control. Deferred controls set the start to the prompt length, layerwise converts per layer, and HTTP defaults use the unmodified server. Server termination after the response was requested to collect its full /usr/bin/time -l footer."
+  ],
+  "finalized_utc": "2026-11-03T06:45:00.354281+00:00",
+  "completed_run_count": 27,
+  "followup": {
+    "registration": "48c0d04",
+    "benchmark": "eac9abba56ba88b99bd5d99e72ec73485ab02d22",
+    "original_strict_gate_met": false,
+    "observations": [
+      {
+        "run": "r",
+        "size": "8B",
+        "mode": "quant8_layerwise",
+        "step": 2048,
+        "transport": "http",
+        "peak_gib": 7.8534893319010735,
+        "ttft_s": 171.19855270796688,
+        "decode_tps": 16.693844127362357,
+        "total_s": 175.45161745796213,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 72
+      },
+      {
+        "run": "s",
+        "size": "8B",
+        "mode": "quant8_deferred",
+        "step": 2048,
+        "transport": "direct",
+        "peak_gib": 11.08237125724554,
+        "ttft_s": 165.39435941702686,
+        "decode_tps": 17.084268038942373,
+        "total_s": 169.49169620900648,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 71
+      },
+      {
+        "run": "t",
+        "size": "8B",
+        "mode": "quant8_layerwise",
+        "step": 2048,
+        "transport": "direct",
+        "peak_gib": 7.696338973939419,
+        "ttft_s": 170.9177266669576,
+        "decode_tps": 17.056070116150714,
+        "total_s": 175.02183737495216,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 71
+      },
+      {
+        "run": "u",
+        "size": "8B",
+        "mode": "quant8",
+        "step": 2048,
+        "transport": "direct",
+        "peak_gib": 9.368168443441391,
+        "ttft_s": 168.75514270801796,
+        "decode_tps": 17.0873328410563,
+        "total_s": 174.90004554198822,
+        "correct_fields": [
+          "exception",
+          "status",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 106
+      },
+      {
+        "run": "v",
+        "size": "8B",
+        "mode": "quant8_layerwise",
+        "step": 2048,
+        "transport": "http",
+        "peak_gib": 7.843586377799511,
+        "ttft_s": 171.1559965829947,
+        "decode_tps": 17.132480442914538,
+        "total_s": 175.30017174995737,
+        "correct_fields": [
+          "exception",
+          "status",
+          "error",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 72
+      },
+      {
+        "run": "w",
+        "size": "14B",
+        "mode": "full",
+        "step": 2048,
+        "transport": "http",
+        "peak_gib": 15.406729817390442,
+        "ttft_s": 286.9547081250348,
+        "decode_tps": 10.062333953080676,
+        "total_s": 294.5076277910266,
+        "correct_fields": [
+          "exception",
+          "status",
+          "environment",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 77
+      },
+      {
+        "run": "x",
+        "size": "14B",
+        "mode": "quant8_layerwise",
+        "step": 2048,
+        "transport": "http",
+        "peak_gib": 11.58194638043642,
+        "ttft_s": 295.38151891704183,
+        "decode_tps": 11.089813615344013,
+        "total_s": 302.23465483402833,
+        "correct_fields": [
+          "exception",
+          "status",
+          "environment",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 77
+      },
+      {
+        "run": "y",
+        "size": "14B",
+        "mode": "quant4_layerwise",
+        "step": 2048,
+        "transport": "http",
+        "peak_gib": 10.794333465397358,
+        "ttft_s": 294.8548666249844,
+        "decode_tps": 11.666693918936872,
+        "total_s": 301.45485120802186,
+        "correct_fields": [
+          "exception",
+          "status",
+          "environment",
+          "wait_value"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 78
+      },
+      {
+        "run": "aa",
+        "size": "8B",
+        "mode": "quant8",
+        "step": 128,
+        "transport": "direct",
+        "peak_gib": 8.582829043269157,
+        "ttft_s": 198.99211641598959,
+        "decode_tps": 17.032946749402516,
+        "total_s": 203.57147670799168,
+        "correct_fields": [
+          "exception",
+          "status",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 79
+      },
+      {
+        "run": "ab",
+        "size": "8B",
+        "mode": "quant8",
+        "step": 128,
+        "transport": "direct",
+        "peak_gib": 8.5781903937459,
+        "ttft_s": 200.2170936249895,
+        "decode_tps": 17.087455080023027,
+        "total_s": 206.36195250001037,
+        "correct_fields": [
+          "exception",
+          "status",
+          "retry_after"
+        ],
+        "strict_exact": false,
+        "input_tokens": 22817,
+        "output_tokens": 106
+      }
+    ],
+    "14b_confirmation": {
+      "reference_8b_peak_bytes": 12045357616,
+      "screen_eligible_modes": [],
+      "selected": null,
+      "conditional_runs": []
+    },
+    "8b_8bit": {
+      "reference_4b_gib": 9.07745636254549,
+      "max_peak_gib": 7.8534893319010735,
+      "both_inside_reference": true,
+      "both_meet_every_original_rule": false,
+      "matched_policy_direct": {
+        "prompt_sha256": true,
+        "output_sha256": true,
+        "first_logprobs_sha256": true,
+        "kv_bytes_first": true,
+        "kv_bytes_end": true
+      },
+      "http_answer_text_identical_to_stock_8b": true,
+      "tested_early8_policy_costs": {
+        "u": {
+          "inside_4b_default_direct_reference": false,
+          "identical_answer_to_full8b": false,
+          "correct_fields": [
+            "exception",
+            "status",
+            "retry_after"
+          ]
+        },
+        "aa": {
+          "inside_4b_default_direct_reference": true,
+          "identical_answer_to_full8b": false,
+          "correct_fields": [
+            "exception",
+            "status",
+            "retry_after"
+          ]
+        },
+        "ab": {
+          "inside_4b_default_direct_reference": true,
+          "identical_answer_to_full8b": false,
+          "correct_fields": [
+            "exception",
+            "status",
+            "retry_after"
+          ]
+        }
+      },
+      "direct_output_tokens_identical_to_full8b": true
+    },
+    "additional_small_chunk_controls": {
+      "recorded_utc": "2026-11-03T06:20:57.779666+00:00",
+      "reason": "The first 8-bit API run restored the full-KV 8B answer below the 4B default footprint. The 2048-chunk early8 control used 9.37 GiB. Check both previously considered early thresholds at chunk 128 before comparing attainable footprints. These controls may weaken the new path's practical advantage.",
+      "cases": [
+        [
+          "aa",
+          "8B",
+          "quant8",
+          128,
+          5000
+        ],
+        [
+          "ab",
+          "8B",
+          "quant8",
+          128,
+          0
+        ]
+      ],
+      "classification": "Additional descriptive baseline controls registered locally after observing the 2048-chunk early8 result. No change to any usability gate, input, candidate configuration or score."
+    },
+    "14b_screen_same_text_as_default": {
+      "x": true,
+      "y": false
+    }
+  },
+  "size_accounting": {
+    "4b_to_8b_additional_checkpoint_bytes": 2344812645,
+    "4b_full_minus_8b_layerwise4_resident_kv_bytes": 2441871360,
+    "source": "pinned safetensors file sizes and the measured cache at first yield, excluding allocator/runtime from this component comparison"
+  },
+  "answer_key_runtime_check": {
+    "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+    "method": "Exercise the real SimpleEngine admission context with its lock held; apply the real HTTP exception translator. Check the counter increments and that an independently constructed engine configured for wait blocks until release. No model generation in the oracle.",
+    "observed_answer": {
+      "exception": "EngineBusy",
+      "counter": "_generation_busy_rejections",
+      "status": 503,
+      "error": "text_generation_busy",
+      "environment": "VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION",
+      "wait_value": "wait",
+      "retry_after": false
+    }
+  },
+  "answer_sources": {
+    "exception_and_error": "vllm_mlx/engine/base.py:46-49",
+    "environment_and_wait_value": "vllm_mlx/engine/simple.py:281-298",
+    "counter": "vllm_mlx/engine/simple.py:744-756",
+    "status_error_header": "vllm_mlx/server.py:1231-1239"
+  },
+  "pre_inference_setup_attempts": [
+    {
+      "configuration": "direct 4B full, step 2048",
+      "issue": "The offline snapshot checker required two ancillary repository files, README.md and .gitattributes. The benchmark exited before model load. After retrieving the pinned ancillary files, the same configuration ran to completion (g).",
+      "stderr_sha256": "1b308d67168de79fb49cd2b2e585b643d3b346dfc5bdebdf52eb485cf61a1401",
+      "inference_observation": false
+    }
+  ],
+  "measured_harness_commits": {
+    "primary": "3fe6917eafc62fd7c7cc4dde5a758efcf45df992",
+    "precision_and_small_chunk_controls": "eac9abba56ba88b99bd5d99e72ec73485ab02d22"
+  },
+  "raw_runs_sha256": "ea93c5720d26fbf7be62ecbd9137f8dcc9084ec114cd2f755b894feeafaab79c"
+}
