@@ -1,0 +1,89 @@
+{
+  "registered_utc": "2026-11-03T04:59:45.863910+00:00",
+  "feature_commit": "8f0b640",
+  "base_commit": "3af7d7d61576606153f419816be2f4a1a9baab06",
+  "question": "Can Qwen3-8B complete the same real code audit within the measured peak physical footprint of the default Qwen3-4B process, with correct answers and usable generation on this M1 Pro 32 GiB?",
+  "models": {
+    "4B": [
+      "mlx-community/Qwen3-4B-4bit",
+      "4dcb3d101c2a062e5c1d4bb173588c54ea6c4d25"
+    ],
+    "8B": [
+      "mlx-community/Qwen3-8B-4bit",
+      "545dc4251c05440727734bcd94334791f6ab0192"
+    ]
+  },
+  "source_excerpts": [
+    [
+      "vllm_mlx/engine/base.py",
+      1,
+      436
+    ],
+    [
+      "vllm_mlx/api/models.py",
+      1,
+      599
+    ],
+    [
+      "vllm_mlx/engine/simple.py",
+      1,
+      815
+    ],
+    [
+      "vllm_mlx/server.py",
+      1071,
+      1250
+    ],
+    [
+      "vllm_mlx/server.py",
+      2111,
+      2200
+    ],
+    [
+      "vllm_mlx/server.py",
+      5190,
+      5608
+    ],
+    [
+      "vllm_mlx/server.py",
+      5738,
+      6047
+    ]
+  ],
+  "instruction": "Review the following source excerpts from vllm-mlx. Diagnose the incident at the end using this revision of the code.",
+  "question_text": "Two non-streaming chat requests arrive at one text-only SimpleEngine under default settings. The first holds the generation lock and the server rate limiter is disabled. Trace how the second request is handled. Return exactly one JSON object with these fields: exception (the Python exception class name), counter (the rejected-request counter attribute, without self.), status (the numeric HTTP status), error (the machine-readable value inside the HTTP error detail), environment (the exact admission-control environment variable), wait_value (the value that queues the request), and retry_after (a JSON boolean indicating whether the engine-busy HTTP handler itself sets a Retry-After header).",
+  "expected": {
+    "exception": "EngineBusy",
+    "counter": "_generation_busy_rejections",
+    "status": 503,
+    "error": "text_generation_busy",
+    "environment": "VLLM_MLX_SIMPLE_ENGINE_LOCK_ADMISSION",
+    "wait_value": "wait",
+    "retry_after": false
+  },
+  "sampling": "Identical UTF-8 user message and Qwen chat template, thinking disabled, greedy, at most 128 generated tokens, stop at EOS. Score the entire JSON answer against the seven source-derived values and types; retain every answer.",
+  "primary": "Two independent fresh server processes per configuration, counterbalanced order: base 4B default, base 8B default, PR 8B kv_cache_bits=4, then reverse. Same localhost streaming chat endpoint and small warmup. Real output content and usage are measured; the question concerns a non-streaming request in the source under review.",
+  "primary_limits": {
+    "max_ttft_s": 300,
+    "min_decode_tokens_per_s": 5,
+    "min_correct_fields": 7,
+    "require_strict_json": true,
+    "candidate_footprint_reference": "Both 8B layerwise process peaks must be <= the smaller measured reference peak across the two 4B default server runs. Report 8B default in both repeats too. The reference is observed, not enforced on the OS."
+  },
+  "controls": "Separate fresh-process direct-engine controls on the identical prompt: 4B full/2048, 4B full/128, 4B deferred4/2048, 4B deferred4/128, 4B early4/start5000/2048, 8B full/2048, 8B deferred4/2048, 8B layerwise4/2048, 8B early4/start5000/2048, 8B deferred4/128 and 8B early4/start0/128. Direct controls use the same existing harness and compare footprints only within that harness. Compare complete output-token and first-logprob hashes for the 8B deferred/layerwise pair at the same chunk size. Tuned controls are descriptive single runs.",
+  "interpretation": "An ordinary larger-model baseline meeting the same reference, quality and speed rules precludes a unique tier-unlock claim. A same-footprint comparison does not demonstrate OOM, establish the maximum model on this machine, or substitute for testing a lower-RAM Mac. This single audit is an application example, not a general model-quality benchmark.",
+  "resources": "One inference process at a time; start at normal system pressure. No memory caps, forced memory reservations, swap clearance or unrelated app shutdown. Stop the owned run after sustained critical pressure (10 s) or 10 minutes; report budget stops as censored. Physical peak from macOS /usr/bin/time -l includes loading/warmup. Record system-wide swap counters as context.",
+  "same_policy_check": "A crossover preserving dense-prefill/deferred-KV semantics requires the 8B layerwise direct process peak to be <= both measured 4B deferred peaks (steps 2048 and 128). Report whether each original 8B deferred configuration crosses that threshold. Small-chunk rounding can change output; only matching step 2048 is used for the exact implementation-parity assertion.",
+  "prompt_preflight": {
+    "user_message_bytes": 105639,
+    "tokens_per_checkpoint": 22817,
+    "token_ids_sha256": "617b0d7cb8c2383802598e2a94abd74c3820df3575eef09cf4673ea669a6c671",
+    "chat_template_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5"
+  },
+  "source_sha256": {
+    "vllm_mlx/quantized_prefill.py": "9be20ab7a67b773ae5405f2fec34b044b37348f476d2e6a7ea05d6d81479a605",
+    "vllm_mlx/models/llm.py": "1248a85179bb9431777e2c72de1345bab5d93cd44b8adeb4bccf349369c7baec",
+    "benchmarks/bench_quantized_prefill.py": "036775260698494d1c956d7a17206c50b878ba690519bf24688a989181f76353",
+    "benchmarks/bench_model_tier.py": "395fceb460d13ce0840187d8e6631891d4d4b4ad1034724e1f6d1b2189e7998c"
+  }
+}
